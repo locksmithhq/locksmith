@@ -31,8 +31,6 @@ func (u *authorizeClientUseCase) Execute(ctx context.Context, in input.Authoriza
 		)
 	}
 
-	fmt.Println(client.RedirectURIs)
-	fmt.Println(in.RedirectURI)
 	clientRedirectURIs := strings.Split(client.RedirectURIs, " ")
 	if !slices.Contains(clientRedirectURIs, in.RedirectURI) {
 		return output.Client{}, stackerror.NewUseCaseError(

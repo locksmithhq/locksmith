@@ -3,7 +3,6 @@ package handler
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
 
 	"github.com/booscaaa/locksmith/api/internal/account/contract"
@@ -32,7 +31,6 @@ func (h *getAccountByProjectIDAndIDHandler) Execute(w http.ResponseWriter, r *ht
 
 	account, err := h.getAccountByProjectIDAndIDUseCase.Execute(r.Context(), projectID, id)
 	if err != nil {
-		fmt.Println(err)
 		stackerror.HttpResponse(w, "GetAccountByProjectIDAndIDHandler", err)
 		return
 	}
