@@ -22,7 +22,6 @@ web/.env.*.local
 *.dll
 *.so
 *.dylib
-locksmith
 
 # Build artifacts
 bin/
