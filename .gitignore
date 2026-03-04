@@ -1,0 +1,37 @@
+# Environment
+.env
+.env.ports
+.env.*.local
+.env.local
+
+# Local dev artifacts
+api/database
+api/dev
+api/locksmith
+api/deploy/
+
+# Web
+web/node_modules/
+web/dist/
+web/.env.local
+web/.env.*.local
+
+# Go binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+locksmith
+
+# Build artifacts
+bin/
+dist/
+deploy/
+
+# IDE / OS
+.agent
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
