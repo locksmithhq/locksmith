@@ -1,0 +1,95 @@
+services:
+  api:
+    container_name: api-locksmith
+    build:
+      context: ./api
+      dockerfile: Dockerfile.dev
+    networks:
+      - locksmith-network
+    restart: unless-stopped
+    environment:
+      - LOCKSMITH_APP_PORT=${LOCKSMITH_APP_PORT}
+      - LOCKSMITH_BASE_URL=${LOCKSMITH_BASE_URL}
+      - POSTGRES_HOST=${POSTGRES_HOST}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_PORT=${POSTGRES_PORT}
+      - SCHEMA=${SCHEMA}
+      - SSL_MODE=${SSL_MODE}
+      - LOCKSMITH_APP_CLIENT_SECRET=${LOCKSMITH_APP_CLIENT_SECRET}
+      - LOCKSMITH_APP_CLIENT_ID=${LOCKSMITH_APP_CLIENT_ID}
+    volumes:
+      - ./api:/api
+      - ./config/database:/api/database
+      - ./config/database/seeder:/etc/locksmith/config
+    depends_on:
+      - database
+
+  web:
+    container_name: web-locksmith
+    image: oven/bun:1
+    working_dir: /app
+    networks:
+      - locksmith-network
+    volumes:
+      - ./web:/app
+      - ./web/node_modules:/app/node_modules
+    command: sh -c "bun install && bun run dev"
+
+  proxy:
+    container_name: proxy-locksmith
+    build:
+      context: ./proxy
+      dockerfile: Dockerfile.dev
+      args:
+        - LOCKSMITH_APP_PORT=${LOCKSMITH_APP_PORT}
+    ports:
+      - "${LOCKSMITH_APP_PORT}:80"
+
+    environment:
+      - LOCKSMITH_APP_PORT=${LOCKSMITH_APP_PORT}
+    networks:
+      - locksmith-network
+    depends_on:
+      - api
+      - web
+
+  database:
+    container_name: database-locksmith
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      - POSTGRES_HOST=${POSTGRES_HOST}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_PORT=${POSTGRES_PORT}
+      - SSL_MODE=${SSL_MODE}
+    volumes:
+      - locksmith-data:/var/lib/postgresql/data
+    networks:
+      - locksmith-network
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  pgweb:
+    image: sosedoff/pgweb
+    container_name: pgweb-locksmith
+    environment:
+      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=${SSL_MODE}
+    depends_on:
+      - database
+    restart: unless-stopped
+    networks:
+      - locksmith-network
+
+volumes:
+  locksmith-data:
+
+networks:
+  locksmith-network:
+    driver: bridge

@@ -1,0 +1,1 @@
+ALTER TABLE accounts ADD COLUMN role_name TEXT NOT NULL;
