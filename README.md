@@ -298,24 +298,24 @@ All configuration is done through environment variables.
 
 ### Required Variables
 
-| Variable | Description | Example |
-|---|---|---|
-| `LOCKSMITH_APP_PORT` | Port the API listens on | `4000` |
-| `LOCKSMITH_BASE_URL` | Public base URL (used for OAuth callbacks and cookie domain) | `http://localhost:4000` |
-| `LOCKSMITH_APP_CLIENT_ID` | Client ID of the built-in Locksmith management client | `my-client-id` |
-| `LOCKSMITH_APP_CLIENT_SECRET` | Client secret of the built-in management client | `my-client-secret` |
-| `POSTGRES_HOST` | PostgreSQL hostname | `database` |
-| `POSTGRES_USER` | PostgreSQL username | `locksmith` |
-| `POSTGRES_PASSWORD` | PostgreSQL password | `locksmith123` |
-| `POSTGRES_DB` | PostgreSQL database name | `locksmith` |
-| `POSTGRES_PORT` | PostgreSQL port | `5432` |
-| `SCHEMA` | PostgreSQL schema name | `locksmith` |
-| `SSL_MODE` | PostgreSQL SSL mode (`disable`, `require`, `verify-full`) | `disable` |
+| Variable                      | Description                                                  | Example                 |
+| ----------------------------- | ------------------------------------------------------------ | ----------------------- |
+| `LOCKSMITH_APP_PORT`          | Port the API listens on                                      | `4000`                  |
+| `LOCKSMITH_BASE_URL`          | Public base URL (used for OAuth callbacks and cookie domain) | `http://localhost:4000` |
+| `LOCKSMITH_APP_CLIENT_ID`     | Client ID of the built-in Locksmith management client        | `my-client-id`          |
+| `LOCKSMITH_APP_CLIENT_SECRET` | Client secret of the built-in management client              | `my-client-secret`      |
+| `POSTGRES_HOST`               | PostgreSQL hostname                                          | `database`              |
+| `POSTGRES_USER`               | PostgreSQL username                                          | `locksmith`             |
+| `POSTGRES_PASSWORD`           | PostgreSQL password                                          | `locksmith123`          |
+| `POSTGRES_DB`                 | PostgreSQL database name                                     | `locksmith`             |
+| `POSTGRES_PORT`               | PostgreSQL port                                              | `5432`                  |
+| `SCHEMA`                      | PostgreSQL schema name                                       | `locksmith`             |
+| `SSL_MODE`                    | PostgreSQL SSL mode (`disable`, `require`, `verify-full`)    | `disable`               |
 
 ### Optional Variables
 
-| Variable | Description | Default |
-|---|---|---|
+| Variable                      | Description                                                                                                                  | Default                  |
+| ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------ |
 | `VITE_LOCKSMITH_API_BASE_URL` | Override the API base URL used by the frontend SPA. Useful when the frontend is served from a different origin than the API. | `window.location.origin` |
 
 ### Notes
@@ -331,13 +331,13 @@ All configuration is done through environment variables.
 
 On first boot, Locksmith creates the following defaults:
 
-| Resource | Value |
-|---|---|
-| **Default project** | `Default Project` (domain: `domain:locksmith`) |
-| **Admin email** | `admin@locksmith.rs` |
-| **Admin username** | `admin` |
-| **Admin password** | `admin` |
-| **Default OAuth client** | `Default Client` |
+| Resource                 | Value                                          |
+| ------------------------ | ---------------------------------------------- |
+| **Default project**      | `Default Project` (domain: `domain:locksmith`) |
+| **Admin email**          | `admin@locksmith.rs`                           |
+| **Admin username**       | `admin`                                        |
+| **Admin password**       | `admin`                                        |
+| **Default OAuth client** | `Default Client`                               |
 
 > **Change the admin password immediately after your first login.**
 
@@ -412,37 +412,10 @@ Locksmith implements the **Authorization Code flow with PKCE** (RFC 7636).
 
 <img src="docs/oauth2-flow.svg" width="100%" alt="OAuth2 Authorization Code + PKCE Flow" />
 
-```
-Client App                  Browser                  Locksmith
-    │                          │                          │
-    │── 1. Redirect to /authorize ─────────────────────>│
-    │      ?client_id=...                                │
-    │      &redirect_uri=...                             │
-    │      &code_challenge=...                           │
-    │      &response_type=code                           │
-    │                          │                          │
-    │                          │<── Login page (SPA) ────│
-    │                          │                          │
-    │                          │── 2. POST /oauth2/login ─>│
-    │                          │      {email, password,   │
-    │                          │       client_id}         │
-    │                          │                          │
-    │                          │<── 3. auth_code ─────────│
-    │                          │                          │
-    │<── 4. redirect_uri?code= ─│                          │
-    │                          │                          │
-    │── 5. GET /locksmith/callback?code= ──────────────>│
-    │                          │                          │
-    │<── 6. Set-Cookie: LOCKSMITHACCESSTOKEN ───────────│
-    │       Set-Cookie: LOCKSMITHREFRESHTOKEN            │
-    │                          │                          │
-    │── 7. GET /locksmith/status ──────────────────────>│
-    │<── 200 OK ────────────────────────────────────────│
-```
-
 ### Step-by-step
 
 **1. Start authorization:**
+
 ```
 GET /api/oauth2/authorize
   ?client_id=<client_id>
@@ -454,6 +427,7 @@ GET /api/oauth2/authorize
 ```
 
 **2. User login:**
+
 ```http
 POST /api/oauth2/login
 Content-Type: application/json
@@ -466,6 +440,7 @@ Content-Type: application/json
 ```
 
 **3. Exchange code for tokens:**
+
 ```http
 POST /api/oauth2/access-token
 Content-Type: application/json
@@ -480,6 +455,7 @@ Content-Type: application/json
 ```
 
 Response:
+
 ```json
 {
   "access_token": "<jwt>",
@@ -490,6 +466,7 @@ Response:
 ```
 
 **4. Refresh tokens:**
+
 ```http
 POST /api/oauth2/refresh-token
 Content-Type: application/json
@@ -526,70 +503,71 @@ Routes with no marker are public.
 
 ### OAuth2
 
-| Method | Path | Description |
-|---|---|---|
-| `POST` | `/api/oauth2/authorize` | Start authorization — create auth code |
-| `POST` | `/api/oauth2/login` | Authenticate user credentials |
-| `POST` | `/api/oauth2/access-token` | Exchange auth code for access + refresh tokens |
-| `POST` | `/api/oauth2/refresh-token` | Rotate refresh token and get new access token |
+| Method | Path                        | Description                                    |
+| ------ | --------------------------- | ---------------------------------------------- |
+| `POST` | `/api/oauth2/authorize`     | Start authorization — create auth code         |
+| `POST` | `/api/oauth2/login`         | Authenticate user credentials                  |
+| `POST` | `/api/oauth2/access-token`  | Exchange auth code for access + refresh tokens |
+| `POST` | `/api/oauth2/refresh-token` | Rotate refresh token and get new access token  |
 
 ---
 
 ### Locksmith Callback
 
-| Method | Path | Description |
-|---|---|---|
-| `GET` | `/api/locksmith/callback` | OAuth callback — exchanges code, sets cookies |
-| `GET` | `/api/locksmith/status` | Check if current session is authenticated |
-| `POST` | `/api/locksmith/r` | Refresh access token using cookie |
+| Method | Path                      | Description                                   |
+| ------ | ------------------------- | --------------------------------------------- |
+| `GET`  | `/api/locksmith/callback` | OAuth callback — exchanges code, sets cookies |
+| `GET`  | `/api/locksmith/status`   | Check if current session is authenticated     |
+| `POST` | `/api/locksmith/r`        | Refresh access token using cookie             |
 
 ---
 
 ### Projects 🔒
 
-| Method | Path | Description |
-|---|---|---|
-| `GET` | `/api/projects` | List all projects (paginated) |
-| `GET` | `/api/projects/:id` | Get a single project |
-| `POST` | `/api/projects` | Create a new project |
-| `PUT` | `/api/projects/:id` | Update a project |
-| `DELETE` | `/api/projects/:id` | Delete a project |
+| Method   | Path                | Description                   |
+| -------- | ------------------- | ----------------------------- |
+| `GET`    | `/api/projects`     | List all projects (paginated) |
+| `GET`    | `/api/projects/:id` | Get a single project          |
+| `POST`   | `/api/projects`     | Create a new project          |
+| `PUT`    | `/api/projects/:id` | Update a project              |
+| `DELETE` | `/api/projects/:id` | Delete a project              |
 
 ---
 
 ### Accounts
 
-| Method | Path | Auth | Description |
-|---|---|---|---|
-| `POST` | `/api/projects/:project_id/accounts` | 🔒 | Create account (dashboard) |
-| `PUT` | `/api/projects/:project_id/accounts/:account_id` | 🔒 | Update account (dashboard) |
-| `GET` | `/api/projects/:project_id/accounts` | 🔒 | List accounts with pagination |
-| `GET` | `/api/projects/:project_id/accounts/count` | 🔒 | Count accounts matching filters |
-| `POST` | `/api/accounts` | 🔑 | Create account (client credentials) |
-| `GET` | `/api/accounts/:id` | 🔑 | Get account by ID (client credentials) |
-| `PUT` | `/api/accounts/:account_id` | 🔑 | Update account (client credentials) |
-| `POST` | `/api/accounts/change-password` | public | Change password |
+| Method | Path                                             | Auth   | Description                            |
+| ------ | ------------------------------------------------ | ------ | -------------------------------------- |
+| `POST` | `/api/projects/:project_id/accounts`             | 🔒     | Create account (dashboard)             |
+| `PUT`  | `/api/projects/:project_id/accounts/:account_id` | 🔒     | Update account (dashboard)             |
+| `GET`  | `/api/projects/:project_id/accounts`             | 🔒     | List accounts with pagination          |
+| `GET`  | `/api/projects/:project_id/accounts/count`       | 🔒     | Count accounts matching filters        |
+| `POST` | `/api/accounts`                                  | 🔑     | Create account (client credentials)    |
+| `GET`  | `/api/accounts/:id`                              | 🔑     | Get account by ID (client credentials) |
+| `PUT`  | `/api/accounts/:account_id`                      | 🔑     | Update account (client credentials)    |
+| `POST` | `/api/accounts/change-password`                  | public | Change password                        |
 
 **Pagination query parameters** (for list endpoints):
 
-| Parameter | Description | Example |
-|---|---|---|
-| `page` | Page number (1-based) | `?page=2` |
-| `limit` | Items per page | `?limit=20` |
-| `search` | Search across name, email, username | `?search=john` |
+| Parameter | Description                         | Example        |
+| --------- | ----------------------------------- | -------------- |
+| `page`    | Page number (1-based)               | `?page=2`      |
+| `limit`   | Items per page                      | `?limit=20`    |
+| `search`  | Search across name, email, username | `?search=john` |
 
 ---
 
 ### OAuth Clients 🔒
 
-| Method | Path | Description |
-|---|---|---|
-| `GET` | `/api/projects/:project_id/clients` | List OAuth clients |
-| `GET` | `/api/projects/:project_id/clients/:id` | Get a single OAuth client |
-| `POST` | `/api/projects/:project_id/clients` | Create OAuth client |
-| `PUT` | `/api/projects/:project_id/clients/:id` | Update OAuth client |
+| Method | Path                                    | Description               |
+| ------ | --------------------------------------- | ------------------------- |
+| `GET`  | `/api/projects/:project_id/clients`     | List OAuth clients        |
+| `GET`  | `/api/projects/:project_id/clients/:id` | Get a single OAuth client |
+| `POST` | `/api/projects/:project_id/clients`     | Create OAuth client       |
+| `PUT`  | `/api/projects/:project_id/clients/:id` | Update OAuth client       |
 
 **Create/Update OAuth client body:**
+
 ```json
 {
   "name": "My Application",
@@ -602,48 +580,49 @@ Routes with no marker are public.
 
 ### Login Page Configuration 🔒
 
-| Method | Path | Description |
-|---|---|---|
-| `GET` | `/api/projects/:project_id/clients/:id/login` | Get login page config |
+| Method | Path                                          | Description              |
+| ------ | --------------------------------------------- | ------------------------ |
+| `GET`  | `/api/projects/:project_id/clients/:id/login` | Get login page config    |
 | `POST` | `/api/projects/:project_id/clients/:id/login` | Create login page config |
-| `PUT` | `/api/projects/:project_id/clients/:id/login` | Update login page config |
+| `PUT`  | `/api/projects/:project_id/clients/:id/login` | Update login page config |
 
 ---
 
 ### Sessions 🔒
 
-| Method | Path | Description |
-|---|---|---|
-| `GET` | `/api/projects/:project_id/sessions` | List sessions (paginated) |
-| `GET` | `/api/projects/:project_id/sessions/count` | Count sessions |
+| Method | Path                                       | Description               |
+| ------ | ------------------------------------------ | ------------------------- |
+| `GET`  | `/api/projects/:project_id/sessions`       | List sessions (paginated) |
+| `GET`  | `/api/projects/:project_id/sessions/count` | Count sessions            |
 
 **Session query parameters:**
 
-| Parameter | Description | Example |
-|---|---|---|
-| `page` | Page number | `?page=1` |
-| `limit` | Items per page (max 100) | `?limit=20` |
-| `search` | Search by user name, email, IP, browser | `?search=chrome` |
+| Parameter | Description                             | Example          |
+| --------- | --------------------------------------- | ---------------- |
+| `page`    | Page number                             | `?page=1`        |
+| `limit`   | Items per page (max 100)                | `?limit=20`      |
+| `search`  | Search by user name, email, IP, browser | `?search=chrome` |
 
 ---
 
 ### ACL 🔒
 
-| Method | Path | Description |
-|---|---|---|
-| `GET` | `/api/acl` | Fetch full ACL data (roles, modules, actions, policies) |
-| `POST` | `/api/acl/role` | Create a role |
-| `POST` | `/api/acl/module` | Create a module |
-| `POST` | `/api/acl/action` | Create an action |
-| `GET` | `/api/acl/roles` | List all roles |
-| `GET` | `/api/acl/modules` | List all modules |
-| `GET` | `/api/acl/actions` | List all actions |
-| `GET` | `/api/acl/projects/:projectId` | Get ACL policies for a project |
-| `POST` | `/api/acl/projects/:projectId` | Assign role+module+action to a project |
-| `POST` | `/api/acl/enforce` | Check if a subject has permission |
-| `GET` | `/api/acl/permissions/user/:user/domain/:domain` | 🔑 Get user permissions |
+| Method | Path                                             | Description                                             |
+| ------ | ------------------------------------------------ | ------------------------------------------------------- |
+| `GET`  | `/api/acl`                                       | Fetch full ACL data (roles, modules, actions, policies) |
+| `POST` | `/api/acl/role`                                  | Create a role                                           |
+| `POST` | `/api/acl/module`                                | Create a module                                         |
+| `POST` | `/api/acl/action`                                | Create an action                                        |
+| `GET`  | `/api/acl/roles`                                 | List all roles                                          |
+| `GET`  | `/api/acl/modules`                               | List all modules                                        |
+| `GET`  | `/api/acl/actions`                               | List all actions                                        |
+| `GET`  | `/api/acl/projects/:projectId`                   | Get ACL policies for a project                          |
+| `POST` | `/api/acl/projects/:projectId`                   | Assign role+module+action to a project                  |
+| `POST` | `/api/acl/enforce`                               | Check if a subject has permission                       |
+| `GET`  | `/api/acl/permissions/user/:user/domain/:domain` | 🔑 Get user permissions                                 |
 
 **Enforce request body:**
+
 ```json
 {
   "subject": "role:admin",
@@ -657,9 +636,9 @@ Routes with no marker are public.
 
 ### Config (public)
 
-| Method | Path | Description |
-|---|---|---|
-| `GET` | `/api/config` | Returns `baseUrl` and `clientId` for the SPA to bootstrap OAuth |
+| Method | Path          | Description                                                     |
+| ------ | ------------- | --------------------------------------------------------------- |
+| `GET`  | `/api/config` | Returns `baseUrl` and `clientId` for the SPA to bootstrap OAuth |
 
 ---
 
@@ -686,6 +665,7 @@ r.With(locksmith.AclMiddleware("domain:locksmith", "module:accounts", "action:re
 ### Assigning permissions
 
 In the dashboard, go to **Project Details → Roles** to:
+
 1. Create roles (e.g. `admin`, `developer`, `viewer`)
 2. Create modules (e.g. `accounts`, `sessions`, `clients`)
 3. Create actions (e.g. `read:all`, `create:one`, `delete:one`)
@@ -714,17 +694,18 @@ Response `200 OK` means the permission is granted. Response `403 Forbidden` mean
 
 Every resource in Locksmith is scoped to a **Project**. Projects are fully isolated:
 
-| Resource | Isolated by project |
-|---|---|
-| User accounts | ✅ |
-| OAuth clients | ✅ |
-| Sessions | ✅ |
-| ACL policies | ✅ |
-| Login/Register page config | ✅ |
+| Resource                   | Isolated by project |
+| -------------------------- | ------------------- |
+| User accounts              | ✅                  |
+| OAuth clients              | ✅                  |
+| Sessions                   | ✅                  |
+| ACL policies               | ✅                  |
+| Login/Register page config | ✅                  |
 
 This means you can use a single Locksmith instance to manage authentication for multiple independent applications, each with its own users, clients, and permissions.
 
 **Creating a new project:**
+
 1. Log into the dashboard
 2. Go to **Projects → New Project**
 3. Fill in name, description, and domain (e.g. `domain:myapp`)
@@ -736,16 +717,16 @@ This means you can use a single Locksmith instance to manage authentication for 
 
 When a user authenticates via `/api/oauth2/access-token`, Locksmith captures:
 
-| Field | Source |
-|---|---|
-| `ip_address` | `X-Forwarded-For` / `X-Real-IP` header |
-| `device_type` | User-Agent parsing (`mobile`, `desktop`, `tablet`) |
-| `browser` | User-Agent parsing (Chrome, Firefox, Safari, etc.) |
-| `browser_version` | User-Agent parsing |
-| `os` | User-Agent parsing (Windows, macOS, Linux, iOS, Android) |
-| `os_version` | User-Agent parsing |
-| `location_country` | GeoIP via ip-api.com |
-| `location_city` | GeoIP via ip-api.com |
+| Field              | Source                                                   |
+| ------------------ | -------------------------------------------------------- |
+| `ip_address`       | `X-Forwarded-For` / `X-Real-IP` header                   |
+| `device_type`      | User-Agent parsing (`mobile`, `desktop`, `tablet`)       |
+| `browser`          | User-Agent parsing (Chrome, Firefox, Safari, etc.)       |
+| `browser_version`  | User-Agent parsing                                       |
+| `os`               | User-Agent parsing (Windows, macOS, Linux, iOS, Android) |
+| `os_version`       | User-Agent parsing                                       |
+| `location_country` | GeoIP via ip-api.com                                     |
+| `location_city`    | GeoIP via ip-api.com                                     |
 
 Sessions are visible in the dashboard under **Project Details → Logs**.
 
@@ -764,23 +745,23 @@ The web dashboard is served at the root path (`/`) and provides a full UI for ma
 
 ### Main sections
 
-| Section | Path | Description |
-|---|---|---|
-| Dashboard | `/` | Overview |
-| Projects | `/projects` | Create and manage projects |
-| Project Details | `/projects/:id` | Tabs for Config, Roles, OAuth Clients, Users, Logs |
-| OAuth Client Details | `/projects/:id/clients/:id` | Config, Login page, Register page |
-| ACL | `/acl` | Manage global roles, modules, and actions |
+| Section              | Path                        | Description                                        |
+| -------------------- | --------------------------- | -------------------------------------------------- |
+| Dashboard            | `/`                         | Overview                                           |
+| Projects             | `/projects`                 | Create and manage projects                         |
+| Project Details      | `/projects/:id`             | Tabs for Config, Roles, OAuth Clients, Users, Logs |
+| OAuth Client Details | `/projects/:id/clients/:id` | Config, Login page, Register page                  |
+| ACL                  | `/acl`                      | Manage global roles, modules, and actions          |
 
 ### Project Details tabs
 
-| Tab | Description |
-|---|---|
-| **Config** | Edit project name, description, and domain |
-| **Roles** | Create roles, modules, actions, and assign ACL policies |
-| **OAuth Clients** | Manage OAuth clients and copy credentials |
-| **Users** | Create and manage user accounts with server-side pagination |
-| **Logs** | View sessions with device info, IP, location, and status |
+| Tab               | Description                                                 |
+| ----------------- | ----------------------------------------------------------- |
+| **Config**        | Edit project name, description, and domain                  |
+| **Roles**         | Create roles, modules, actions, and assign ACL policies     |
+| **OAuth Clients** | Manage OAuth clients and copy credentials                   |
+| **Users**         | Create and manage user accounts with server-side pagination |
+| **Logs**          | View sessions with device info, IP, location, and status    |
 
 ---
 
@@ -791,17 +772,20 @@ To run Locksmith locally for development with hot reload:
 **Prerequisites:** Docker, Docker Compose
 
 **1. Clone the repository:**
+
 ```bash
 git clone https://github.com/booscaaa/locksmith.git
 cd locksmith
 ```
 
 **2. Copy the environment file:**
+
 ```bash
 cp .env.example .env
 ```
 
 **3. Start all services:**
+
 ```bash
 make up
 # or
@@ -809,32 +793,33 @@ docker compose up --build -d
 ```
 
 **4. Open the dashboard:**
+
 ```
 http://localhost:4000
 ```
 
 **Available make commands:**
 
-| Command | Description |
-|---|---|
-| `make up` | Start all services (builds if needed) |
-| `make down` | Stop all services |
-| `make restart` | Stop and restart all services |
-| `make rebuild` | Stop, rebuild images, and restart |
-| `make logs` | Tail logs for all services |
-| `make logs-api` | Tail API logs only |
-| `make logs-web` | Tail frontend logs only |
-| `make logs-db` | Tail database logs only |
-| `make shell-api` | Open shell inside the API container |
-| `make shell-db` | Open psql inside the database container |
-| `make clean` | Stop services and remove all volumes |
-| `make status` | Show container status |
+| Command          | Description                             |
+| ---------------- | --------------------------------------- |
+| `make up`        | Start all services (builds if needed)   |
+| `make down`      | Stop all services                       |
+| `make restart`   | Stop and restart all services           |
+| `make rebuild`   | Stop, rebuild images, and restart       |
+| `make logs`      | Tail logs for all services              |
+| `make logs-api`  | Tail API logs only                      |
+| `make logs-web`  | Tail frontend logs only                 |
+| `make logs-db`   | Tail database logs only                 |
+| `make shell-api` | Open shell inside the API container     |
+| `make shell-db`  | Open psql inside the database container |
+| `make clean`     | Stop services and remove all volumes    |
+| `make status`    | Show container status                   |
 
 **Development services:**
 
-| Service | URL | Description |
-|---|---|---|
+| Service         | URL                     | Description           |
+| --------------- | ----------------------- | --------------------- |
 | Dashboard + API | `http://localhost:4000` | Proxied through nginx |
-| pgweb | `http://localhost:8081` | PostgreSQL web UI |
+| pgweb           | `http://localhost:8081` | PostgreSQL web UI     |
 
 The development setup uses **Air** for Go hot reload and **Bun** with Vite HMR for the frontend. Changes to Go or Vue files are reflected without restarting containers.
