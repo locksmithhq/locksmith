@@ -1,4 +1,4 @@
-module github.com/booscaaa/locksmith/api
+module github.com/locksmithhq/locksmith/api
 
 go 1.25.5
 

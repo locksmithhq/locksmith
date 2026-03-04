@@ -5,9 +5,9 @@ import (
 
 	"github.com/booscaaa/go-paginate/v3/paginate"
 	"github.com/booscaaa/initializers/postgres/types"
-	"github.com/booscaaa/locksmith/api/internal/core/types/stackerror"
-	"github.com/booscaaa/locksmith/api/internal/oauth_clients/contract"
-	"github.com/booscaaa/locksmith/api/internal/oauth_clients/domain"
+	"github.com/locksmithhq/locksmith/api/internal/core/types/stackerror"
+	"github.com/locksmithhq/locksmith/api/internal/oauth_clients/contract"
+	"github.com/locksmithhq/locksmith/api/internal/oauth_clients/domain"
 )
 
 type fetchClientsByProjectIDRepository struct {

@@ -1,7 +1,7 @@
 package output
 
 import (
-	"github.com/booscaaa/locksmith/api/internal/oauth_clients/domain"
+	"github.com/locksmithhq/locksmith/api/internal/oauth_clients/domain"
 )
 
 type Client struct {

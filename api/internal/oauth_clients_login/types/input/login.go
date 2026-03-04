@@ -1,6 +1,6 @@
 package input
 
-import "github.com/booscaaa/locksmith/api/internal/oauth_clients_login/domain"
+import "github.com/locksmithhq/locksmith/api/internal/oauth_clients_login/domain"
 
 type Login struct {
 	Layout             string `json:"layout"`

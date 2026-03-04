@@ -774,7 +774,7 @@ To run Locksmith locally for development with hot reload:
 **1. Clone the repository:**
 
 ```bash
-git clone https://github.com/booscaaa/locksmith.git
+git clone https://github.com/locksmithhq/locksmith.git
 cd locksmith
 ```
 

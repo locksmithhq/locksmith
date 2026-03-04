@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/booscaaa/initializers/postgres/types"
-	"github.com/booscaaa/locksmith/api/internal/account/contract"
-	"github.com/booscaaa/locksmith/api/internal/core/types/stackerror"
+	"github.com/locksmithhq/locksmith/api/internal/account/contract"
+	"github.com/locksmithhq/locksmith/api/internal/core/types/stackerror"
 )
 
 type updateAccountPasswordRepository struct {

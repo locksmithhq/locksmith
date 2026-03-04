@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/booscaaa/locksmith/api/cmd/cmd"
+	"github.com/locksmithhq/locksmith/api/cmd/cmd"
 )
 
 func main() {

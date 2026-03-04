@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/booscaaa/locksmith/api/internal/core/types/stackerror"
-	"github.com/booscaaa/locksmith/api/internal/session/contract"
+	"github.com/locksmithhq/locksmith/api/internal/core/types/stackerror"
+	"github.com/locksmithhq/locksmith/api/internal/session/contract"
 	"github.com/go-chi/chi/v5"
 )
 

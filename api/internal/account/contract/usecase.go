@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/booscaaa/go-paginate/v3/paginate"
-	"github.com/booscaaa/locksmith/api/internal/account/types/input"
-	"github.com/booscaaa/locksmith/api/internal/account/types/output"
+	"github.com/locksmithhq/locksmith/api/internal/account/types/input"
+	"github.com/locksmithhq/locksmith/api/internal/account/types/output"
 )
 
 type CreateAccountUseCase interface {

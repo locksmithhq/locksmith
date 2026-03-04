@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/booscaaa/locksmith/api/internal/oauth_clients_signup/contract"
+	"github.com/locksmithhq/locksmith/api/internal/oauth_clients_signup/contract"
 	"github.com/go-chi/chi/v5"
 )
 

@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/booscaaa/initializers/postgres/types"
-	"github.com/booscaaa/locksmith/api/internal/oauth_clients_login/contract"
-	"github.com/booscaaa/locksmith/api/internal/oauth_clients_login/domain"
+	"github.com/locksmithhq/locksmith/api/internal/oauth_clients_login/contract"
+	"github.com/locksmithhq/locksmith/api/internal/oauth_clients_login/domain"
 )
 
 type createLoginByClientIDRepository struct {

@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/booscaaa/locksmith/api/internal/acl/contract"
-	"github.com/booscaaa/locksmith/api/internal/core/types/stackerror"
+	"github.com/locksmithhq/locksmith/api/internal/acl/contract"
+	"github.com/locksmithhq/locksmith/api/internal/core/types/stackerror"
 	"github.com/go-chi/chi/v5"
 	"github.com/locksmithhq/locksmith-go"
 )

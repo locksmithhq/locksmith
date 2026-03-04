@@ -1,12 +1,12 @@
 package di
 
 import (
-	"github.com/booscaaa/locksmith/api/internal/account/contract"
-	"github.com/booscaaa/locksmith/api/internal/account/handler"
-	"github.com/booscaaa/locksmith/api/internal/account/repository"
-	"github.com/booscaaa/locksmith/api/internal/account/usecase"
-	"github.com/booscaaa/locksmith/api/internal/adapter/database"
-	oauth2Repository "github.com/booscaaa/locksmith/api/internal/oauth2/repository"
+	"github.com/locksmithhq/locksmith/api/internal/account/contract"
+	"github.com/locksmithhq/locksmith/api/internal/account/handler"
+	"github.com/locksmithhq/locksmith/api/internal/account/repository"
+	"github.com/locksmithhq/locksmith/api/internal/account/usecase"
+	"github.com/locksmithhq/locksmith/api/internal/adapter/database"
+	oauth2Repository "github.com/locksmithhq/locksmith/api/internal/oauth2/repository"
 )
 
 func NewChangePasswordHandler() contract.ChangePasswordHandler {

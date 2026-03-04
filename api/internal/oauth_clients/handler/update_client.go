@@ -5,9 +5,9 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/booscaaa/locksmith/api/internal/core/types/stackerror"
-	"github.com/booscaaa/locksmith/api/internal/oauth_clients/contract"
-	"github.com/booscaaa/locksmith/api/internal/oauth_clients/types/input"
+	"github.com/locksmithhq/locksmith/api/internal/core/types/stackerror"
+	"github.com/locksmithhq/locksmith/api/internal/oauth_clients/contract"
+	"github.com/locksmithhq/locksmith/api/internal/oauth_clients/types/input"
 	"github.com/go-chi/chi/v5"
 )
 

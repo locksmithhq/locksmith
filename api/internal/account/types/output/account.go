@@ -1,9 +1,9 @@
 package output
 
 import (
-	"github.com/booscaaa/locksmith/api/internal/account/domain"
+	"github.com/locksmithhq/locksmith/api/internal/account/domain"
 
-	"github.com/booscaaa/locksmith/api/internal/core/types/database"
+	"github.com/locksmithhq/locksmith/api/internal/core/types/database"
 )
 
 type Action struct {

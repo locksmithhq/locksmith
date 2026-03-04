@@ -3,7 +3,7 @@ package usecase
 import (
 	"context"
 
-	"github.com/booscaaa/locksmith/api/internal/session/contract"
+	"github.com/locksmithhq/locksmith/api/internal/session/contract"
 )
 
 type countSessionsByProjectIDUseCase struct {

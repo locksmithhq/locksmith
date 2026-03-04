@@ -1,6 +1,6 @@
 package output
 
-import "github.com/booscaaa/locksmith/api/internal/session/domain"
+import "github.com/locksmithhq/locksmith/api/internal/session/domain"
 
 type Session struct {
 	ID              string `json:"id"`

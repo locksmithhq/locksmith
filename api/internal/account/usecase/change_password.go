@@ -5,10 +5,10 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/booscaaa/locksmith/api/internal/account/contract"
-	"github.com/booscaaa/locksmith/api/internal/account/types/input"
-	"github.com/booscaaa/locksmith/api/internal/core/types/stackerror"
-	oauth2Contract "github.com/booscaaa/locksmith/api/internal/oauth2/contract"
+	"github.com/locksmithhq/locksmith/api/internal/account/contract"
+	"github.com/locksmithhq/locksmith/api/internal/account/types/input"
+	"github.com/locksmithhq/locksmith/api/internal/core/types/stackerror"
+	oauth2Contract "github.com/locksmithhq/locksmith/api/internal/oauth2/contract"
 	"github.com/locksmithhq/locksmith-go"
 )
 

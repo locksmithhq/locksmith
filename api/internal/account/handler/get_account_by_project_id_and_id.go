@@ -5,8 +5,8 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/booscaaa/locksmith/api/internal/account/contract"
-	"github.com/booscaaa/locksmith/api/internal/core/types/stackerror"
+	"github.com/locksmithhq/locksmith/api/internal/account/contract"
+	"github.com/locksmithhq/locksmith/api/internal/core/types/stackerror"
 	"github.com/go-chi/chi/v5"
 )
 

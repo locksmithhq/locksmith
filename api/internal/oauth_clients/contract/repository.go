@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/booscaaa/go-paginate/v3/paginate"
-	"github.com/booscaaa/locksmith/api/internal/oauth_clients/domain"
-	"github.com/booscaaa/locksmith/api/internal/oauth_clients/types/input"
+	"github.com/locksmithhq/locksmith/api/internal/oauth_clients/domain"
+	"github.com/locksmithhq/locksmith/api/internal/oauth_clients/types/input"
 )
 
 type CreateClientRepository interface {

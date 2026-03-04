@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/booscaaa/locksmith/api/internal/account/contract"
-	"github.com/booscaaa/locksmith/api/internal/account/types/input"
-	"github.com/booscaaa/locksmith/api/internal/acl"
+	"github.com/locksmithhq/locksmith/api/internal/account/contract"
+	"github.com/locksmithhq/locksmith/api/internal/account/types/input"
+	"github.com/locksmithhq/locksmith/api/internal/acl"
 	"gopkg.in/yaml.v2"
 )
 

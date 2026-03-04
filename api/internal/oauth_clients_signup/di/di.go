@@ -1,11 +1,11 @@
 package di
 
 import (
-	"github.com/booscaaa/locksmith/api/internal/adapter/database"
-	"github.com/booscaaa/locksmith/api/internal/oauth_clients_signup/contract"
-	"github.com/booscaaa/locksmith/api/internal/oauth_clients_signup/handler"
-	"github.com/booscaaa/locksmith/api/internal/oauth_clients_signup/repository"
-	"github.com/booscaaa/locksmith/api/internal/oauth_clients_signup/usecase"
+	"github.com/locksmithhq/locksmith/api/internal/adapter/database"
+	"github.com/locksmithhq/locksmith/api/internal/oauth_clients_signup/contract"
+	"github.com/locksmithhq/locksmith/api/internal/oauth_clients_signup/handler"
+	"github.com/locksmithhq/locksmith/api/internal/oauth_clients_signup/repository"
+	"github.com/locksmithhq/locksmith/api/internal/oauth_clients_signup/usecase"
 )
 
 func NewGetSignupByClientIDHandler() contract.GetSignupByClientIDHandler {

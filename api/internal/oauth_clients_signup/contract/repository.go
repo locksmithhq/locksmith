@@ -3,7 +3,7 @@ package contract
 import (
 	"context"
 
-	"github.com/booscaaa/locksmith/api/internal/oauth_clients_signup/domain"
+	"github.com/locksmithhq/locksmith/api/internal/oauth_clients_signup/domain"
 )
 
 type GetSignupByClientIDRepository interface {

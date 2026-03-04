@@ -8,11 +8,11 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/booscaaa/locksmith/api/internal/core/types/database"
-	"github.com/booscaaa/locksmith/api/internal/core/types/stackerror"
-	"github.com/booscaaa/locksmith/api/internal/oauth2/contract"
-	"github.com/booscaaa/locksmith/api/internal/oauth2/domain"
-	"github.com/booscaaa/locksmith/api/internal/oauth2/types/output"
+	"github.com/locksmithhq/locksmith/api/internal/core/types/database"
+	"github.com/locksmithhq/locksmith/api/internal/core/types/stackerror"
+	"github.com/locksmithhq/locksmith/api/internal/oauth2/contract"
+	"github.com/locksmithhq/locksmith/api/internal/oauth2/domain"
+	"github.com/locksmithhq/locksmith/api/internal/oauth2/types/output"
 	"github.com/google/uuid"
 	"github.com/locksmithhq/locksmith-go"
 )

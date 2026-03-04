@@ -4,11 +4,11 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/booscaaa/locksmith/api/internal/account/contract"
-	"github.com/booscaaa/locksmith/api/internal/account/types/input"
-	"github.com/booscaaa/locksmith/api/internal/account/types/output"
-	aclContract "github.com/booscaaa/locksmith/api/internal/acl/contract"
-	"github.com/booscaaa/locksmith/api/internal/core/types/stackerror"
+	"github.com/locksmithhq/locksmith/api/internal/account/contract"
+	"github.com/locksmithhq/locksmith/api/internal/account/types/input"
+	"github.com/locksmithhq/locksmith/api/internal/account/types/output"
+	aclContract "github.com/locksmithhq/locksmith/api/internal/acl/contract"
+	"github.com/locksmithhq/locksmith/api/internal/core/types/stackerror"
 	"github.com/locksmithhq/locksmith-go"
 )
 

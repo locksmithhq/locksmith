@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/booscaaa/go-paginate/v3/paginate"
-	"github.com/booscaaa/locksmith/api/internal/account/domain"
+	"github.com/locksmithhq/locksmith/api/internal/account/domain"
 )
 
 type CreateAccountRepository interface {

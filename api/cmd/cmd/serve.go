@@ -5,11 +5,11 @@ import (
 	"os"
 
 	"github.com/booscaaa/initializers/validator"
-	aclDi "github.com/booscaaa/locksmith/api/internal/acl/di"
-	"github.com/booscaaa/locksmith/api/internal/acl/types/input"
-	"github.com/booscaaa/locksmith/api/internal/adapter/config"
-	"github.com/booscaaa/locksmith/api/internal/adapter/database"
-	"github.com/booscaaa/locksmith/api/internal/adapter/rest"
+	aclDi "github.com/locksmithhq/locksmith/api/internal/acl/di"
+	"github.com/locksmithhq/locksmith/api/internal/acl/types/input"
+	"github.com/locksmithhq/locksmith/api/internal/adapter/config"
+	"github.com/locksmithhq/locksmith/api/internal/adapter/database"
+	"github.com/locksmithhq/locksmith/api/internal/adapter/rest"
 	"github.com/locksmithhq/locksmith-go"
 	"github.com/spf13/cobra"
 )

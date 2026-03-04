@@ -3,8 +3,8 @@ package usecase
 import (
 	"context"
 
-	"github.com/booscaaa/locksmith/api/internal/session/contract"
-	"github.com/booscaaa/locksmith/api/internal/session/types/output"
+	"github.com/locksmithhq/locksmith/api/internal/session/contract"
+	"github.com/locksmithhq/locksmith/api/internal/session/types/output"
 )
 
 type fetchSessionsByProjectIDUseCase struct {

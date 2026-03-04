@@ -11,13 +11,13 @@ import (
 	"strings"
 	"time"
 
-	accountContract "github.com/booscaaa/locksmith/api/internal/account/contract"
-	accountInput "github.com/booscaaa/locksmith/api/internal/account/types/input"
-	"github.com/booscaaa/locksmith/api/internal/core/types/stackerror"
-	"github.com/booscaaa/locksmith/api/internal/oauth2/contract"
-	"github.com/booscaaa/locksmith/api/internal/oauth2/domain"
-	"github.com/booscaaa/locksmith/api/internal/oauth2/types/input"
-	"github.com/booscaaa/locksmith/api/internal/oauth2/types/output"
+	accountContract "github.com/locksmithhq/locksmith/api/internal/account/contract"
+	accountInput "github.com/locksmithhq/locksmith/api/internal/account/types/input"
+	"github.com/locksmithhq/locksmith/api/internal/core/types/stackerror"
+	"github.com/locksmithhq/locksmith/api/internal/oauth2/contract"
+	"github.com/locksmithhq/locksmith/api/internal/oauth2/domain"
+	"github.com/locksmithhq/locksmith/api/internal/oauth2/types/input"
+	"github.com/locksmithhq/locksmith/api/internal/oauth2/types/output"
 )
 
 type registerUseCase struct {

@@ -1,8 +1,8 @@
 package input
 
 import (
-	"github.com/booscaaa/locksmith/api/internal/core/types/database"
-	"github.com/booscaaa/locksmith/api/internal/oauth_clients_signup/domain"
+	"github.com/locksmithhq/locksmith/api/internal/core/types/database"
+	"github.com/locksmithhq/locksmith/api/internal/oauth_clients_signup/domain"
 )
 
 type Signup struct {

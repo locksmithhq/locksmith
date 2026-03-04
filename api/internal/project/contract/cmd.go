@@ -3,7 +3,7 @@ package contract
 import (
 	"context"
 
-	"github.com/booscaaa/locksmith/api/internal/project/types/output"
+	"github.com/locksmithhq/locksmith/api/internal/project/types/output"
 )
 
 type ConfigDefaultProjectCMD interface {

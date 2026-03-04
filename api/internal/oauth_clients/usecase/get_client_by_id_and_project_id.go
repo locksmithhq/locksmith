@@ -3,9 +3,9 @@ package usecase
 import (
 	"context"
 
-	"github.com/booscaaa/locksmith/api/internal/core/types/stackerror"
-	"github.com/booscaaa/locksmith/api/internal/oauth_clients/contract"
-	"github.com/booscaaa/locksmith/api/internal/oauth_clients/types/output"
+	"github.com/locksmithhq/locksmith/api/internal/core/types/stackerror"
+	"github.com/locksmithhq/locksmith/api/internal/oauth_clients/contract"
+	"github.com/locksmithhq/locksmith/api/internal/oauth_clients/types/output"
 )
 
 type getClientByIDAndProjectIDUseCase struct {

@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/booscaaa/go-paginate/v3/paginate"
-	"github.com/booscaaa/locksmith/api/internal/acl/contract"
-	"github.com/booscaaa/locksmith/api/internal/acl/domain"
+	"github.com/locksmithhq/locksmith/api/internal/acl/contract"
+	"github.com/locksmithhq/locksmith/api/internal/acl/domain"
 )
 
 type fetchAclUseCase struct {

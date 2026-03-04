@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/booscaaa/go-paginate/v3/paginate"
-	"github.com/booscaaa/locksmith/api/internal/oauth_clients/contract"
-	"github.com/booscaaa/locksmith/api/internal/oauth_clients/types/output"
+	"github.com/locksmithhq/locksmith/api/internal/oauth_clients/contract"
+	"github.com/locksmithhq/locksmith/api/internal/oauth_clients/types/output"
 )
 
 type fetchClientsByProjectIDUseCase struct {

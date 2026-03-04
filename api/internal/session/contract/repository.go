@@ -3,7 +3,7 @@ package contract
 import (
 	"context"
 
-	"github.com/booscaaa/locksmith/api/internal/session/domain"
+	"github.com/locksmithhq/locksmith/api/internal/session/domain"
 )
 
 type FetchSessionsByProjectIDRepository interface {

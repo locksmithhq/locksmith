@@ -1,6 +1,6 @@
 package output
 
-import "github.com/booscaaa/locksmith/api/internal/project/domain"
+import "github.com/locksmithhq/locksmith/api/internal/project/domain"
 
 type Project struct {
 	ID          string `json:"id"`

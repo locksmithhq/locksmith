@@ -4,10 +4,10 @@ import (
 	"context"
 	"errors"
 
-	"github.com/booscaaa/locksmith/api/internal/core/types/stackerror"
-	"github.com/booscaaa/locksmith/api/internal/project/contract"
-	"github.com/booscaaa/locksmith/api/internal/project/types/input"
-	"github.com/booscaaa/locksmith/api/internal/project/types/output"
+	"github.com/locksmithhq/locksmith/api/internal/core/types/stackerror"
+	"github.com/locksmithhq/locksmith/api/internal/project/contract"
+	"github.com/locksmithhq/locksmith/api/internal/project/types/input"
+	"github.com/locksmithhq/locksmith/api/internal/project/types/output"
 )
 
 type createProjectUseCase struct {

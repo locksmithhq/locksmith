@@ -5,10 +5,10 @@ import (
 	"errors"
 	"os"
 
-	diAccount "github.com/booscaaa/locksmith/api/internal/account/di"
-	"github.com/booscaaa/locksmith/api/internal/core/types/stackerror"
-	diOAuthClients "github.com/booscaaa/locksmith/api/internal/oauth_clients/di"
-	diProject "github.com/booscaaa/locksmith/api/internal/project/di"
+	diAccount "github.com/locksmithhq/locksmith/api/internal/account/di"
+	"github.com/locksmithhq/locksmith/api/internal/core/types/stackerror"
+	diOAuthClients "github.com/locksmithhq/locksmith/api/internal/oauth_clients/di"
+	diProject "github.com/locksmithhq/locksmith/api/internal/project/di"
 )
 
 func InitializeSeeder(ctx context.Context) {

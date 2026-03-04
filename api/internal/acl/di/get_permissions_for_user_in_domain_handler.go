@@ -1,8 +1,8 @@
 package di
 
 import (
-	"github.com/booscaaa/locksmith/api/internal/acl/contract"
-	"github.com/booscaaa/locksmith/api/internal/acl/handler"
+	"github.com/locksmithhq/locksmith/api/internal/acl/contract"
+	"github.com/locksmithhq/locksmith/api/internal/acl/handler"
 )
 
 func NewGetPermissionsForUserInDomainHandler() contract.GetPermissionsForUserInDomainHandler {

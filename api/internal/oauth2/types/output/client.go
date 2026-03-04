@@ -1,6 +1,6 @@
 package output
 
-import "github.com/booscaaa/locksmith/api/internal/oauth2/domain"
+import "github.com/locksmithhq/locksmith/api/internal/oauth2/domain"
 
 type Client struct {
 	ID       string             `json:"id"`

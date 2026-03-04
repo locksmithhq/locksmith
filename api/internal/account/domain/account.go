@@ -1,6 +1,6 @@
 package domain
 
-import "github.com/booscaaa/locksmith/api/internal/core/types/database"
+import "github.com/locksmithhq/locksmith/api/internal/core/types/database"
 
 type Account struct {
 	ID                 string        `json:"id" db:"id" paginate:"id"`

@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/booscaaa/initializers/postgres/types"
-	"github.com/booscaaa/locksmith/api/internal/acl/contract"
-	"github.com/booscaaa/locksmith/api/internal/acl/domain"
+	"github.com/locksmithhq/locksmith/api/internal/acl/contract"
+	"github.com/locksmithhq/locksmith/api/internal/acl/domain"
 )
 
 type createRoleRepository struct {

@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/booscaaa/initializers/validator"
-	"github.com/booscaaa/locksmith/api/internal/acl/domain"
+	"github.com/locksmithhq/locksmith/api/internal/acl/domain"
 )
 
 type Action struct {

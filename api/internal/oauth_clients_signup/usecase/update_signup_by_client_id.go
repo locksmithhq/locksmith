@@ -3,8 +3,8 @@ package usecase
 import (
 	"context"
 
-	"github.com/booscaaa/locksmith/api/internal/oauth_clients_signup/contract"
-	"github.com/booscaaa/locksmith/api/internal/oauth_clients_signup/types/input"
+	"github.com/locksmithhq/locksmith/api/internal/oauth_clients_signup/contract"
+	"github.com/locksmithhq/locksmith/api/internal/oauth_clients_signup/types/input"
 )
 
 type updateSignupByClientIDUseCase struct {

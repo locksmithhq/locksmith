@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/booscaaa/locksmith/api/internal/acl/di"
-	"github.com/booscaaa/locksmith/api/internal/adapter/database"
+	"github.com/locksmithhq/locksmith/api/internal/acl/di"
+	"github.com/locksmithhq/locksmith/api/internal/adapter/database"
 	"github.com/go-chi/chi/v5"
 	"github.com/locksmithhq/locksmith-go"
 )

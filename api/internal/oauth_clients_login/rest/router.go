@@ -1,7 +1,7 @@
 package rest
 
 import (
-	"github.com/booscaaa/locksmith/api/internal/oauth_clients_login/di"
+	"github.com/locksmithhq/locksmith/api/internal/oauth_clients_login/di"
 	"github.com/go-chi/chi/v5"
 	"github.com/locksmithhq/locksmith-go"
 )

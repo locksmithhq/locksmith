@@ -3,8 +3,8 @@ package usecase
 import (
 	"context"
 
-	"github.com/booscaaa/locksmith/api/internal/core/types/stackerror"
-	"github.com/booscaaa/locksmith/api/internal/project/contract"
+	"github.com/locksmithhq/locksmith/api/internal/core/types/stackerror"
+	"github.com/locksmithhq/locksmith/api/internal/project/contract"
 )
 
 type deleteProjectUseCase struct {

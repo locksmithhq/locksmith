@@ -7,10 +7,10 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/booscaaa/locksmith/api/internal/core/types/stackerror"
-	"github.com/booscaaa/locksmith/api/internal/oauth2/contract"
-	"github.com/booscaaa/locksmith/api/internal/oauth2/types/input"
-	"github.com/booscaaa/locksmith/api/internal/oauth2/types/output"
+	"github.com/locksmithhq/locksmith/api/internal/core/types/stackerror"
+	"github.com/locksmithhq/locksmith/api/internal/oauth2/contract"
+	"github.com/locksmithhq/locksmith/api/internal/oauth2/types/input"
+	"github.com/locksmithhq/locksmith/api/internal/oauth2/types/output"
 )
 
 type authorizeClientUseCase struct {

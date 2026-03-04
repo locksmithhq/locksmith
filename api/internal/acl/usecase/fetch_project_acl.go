@@ -3,9 +3,9 @@ package usecase
 import (
 	"context"
 
-	"github.com/booscaaa/locksmith/api/internal/acl/contract"
-	"github.com/booscaaa/locksmith/api/internal/acl/domain"
-	"github.com/booscaaa/locksmith/api/internal/acl/types/output"
+	"github.com/locksmithhq/locksmith/api/internal/acl/contract"
+	"github.com/locksmithhq/locksmith/api/internal/acl/domain"
+	"github.com/locksmithhq/locksmith/api/internal/acl/types/output"
 )
 
 type fetchProjectAclUseCase struct {
