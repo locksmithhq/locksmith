@@ -41,6 +41,12 @@ import { countSessionsByProjectIDUseCase } from '../domain/usecase/countSessions
 import { countSessionsByProjectIDRepository } from '../data/repository/countSessionsByProjectIDRepository'
 import { countAccountsByProjectIDUseCase } from '../domain/usecase/countAccountsByProjectIDUseCase'
 import { countAccountsByProjectIDRepository } from '../data/repository/countAccountsByProjectIDRepository'
+import { fetchSessionsByAccountIDUseCase } from '../domain/usecase/fetchSessionsByAccountIDUseCase'
+import { fetchSessionsByAccountIDRepository } from '../data/repository/fetchSessionsByAccountIDRepository'
+import { countSessionsByAccountIDUseCase } from '../domain/usecase/countSessionsByAccountIDUseCase'
+import { countSessionsByAccountIDRepository } from '../data/repository/countSessionsByAccountIDRepository'
+import { revokeSessionUseCase } from '../domain/usecase/revokeSessionUseCase'
+import { revokeSessionRepository } from '../data/repository/revokeSessionRepository'
 
 const projectDetailControllerImpl = projectDetailController(
   getProjectByIDUseCase(getProjectByIDRepository(axiosInstance)),
@@ -65,6 +71,9 @@ const projectDetailControllerImpl = projectDetailController(
   createProjectAclUseCase(createProjectAclRepository(axiosInstance)),
   fetchSessionsByProjectIDUseCase(fetchSessionsByProjectIDRepository(axiosInstance)),
   countSessionsByProjectIDUseCase(countSessionsByProjectIDRepository(axiosInstance)),
+  fetchSessionsByAccountIDUseCase(fetchSessionsByAccountIDRepository(axiosInstance)),
+  countSessionsByAccountIDUseCase(countSessionsByAccountIDRepository(axiosInstance)),
+  revokeSessionUseCase(revokeSessionRepository(axiosInstance)),
 )
 
 export { projectDetailControllerImpl }

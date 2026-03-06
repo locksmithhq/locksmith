@@ -38,6 +38,16 @@ const loginController =
       // Store code_verifier in a short-lived cookie so the server-side callback can use it
       document.cookie = `pkce_cv=${codeVerifier}; path=/; max-age=600; samesite=lax`
 
+      // Ensure a stable device_id cookie exists for session fingerprinting
+      if (!document.cookie.split(';').some((c) => c.trim().startsWith('device_id='))) {
+        let deviceId = localStorage.getItem('device_id')
+        if (!deviceId) {
+          deviceId = crypto.randomUUID()
+          localStorage.setItem('device_id', deviceId)
+        }
+        document.cookie = `device_id=${deviceId}; path=/; max-age=31536000; samesite=lax`
+      }
+
       state.codeChallenge = codeChallenge
       state.codeChallengeMethod = 'S256'
 

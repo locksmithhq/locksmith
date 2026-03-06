@@ -27,6 +27,9 @@ const projectDetailController =
     createProjectAclUseCase,
     fetchSessionsByProjectIDUseCase,
     countSessionsByProjectIDUseCase,
+    fetchSessionsByAccountIDUseCase,
+    countSessionsByAccountIDUseCase,
+    revokeSessionUseCase,
   ) =>
   () => {
     const route = useRoute()
@@ -242,6 +245,46 @@ const projectDetailController =
           limit: 20,
           search: '',
           totalPages: 1,
+        },
+      },
+      deviceDialog: {
+        open: false,
+        accountID: null,
+        accountName: '',
+        sessions: [],
+        filter: {
+          page: 1,
+          limit: 10,
+          totalPages: 1,
+        },
+        openFor: async (account) => {
+          state.deviceDialog.accountID = account.id
+          state.deviceDialog.accountName = account.name
+          state.deviceDialog.filter.page = 1
+          state.deviceDialog.sessions = []
+          state.deviceDialog.open = true
+          await Promise.all([
+            fetchSessionsByAccountIDUseCase(state),
+            countSessionsByAccountIDUseCase(state),
+          ])
+        },
+        close: () => {
+          state.deviceDialog.open = false
+          state.deviceDialog.accountID = null
+          state.deviceDialog.sessions = []
+        },
+        fetch: async () => {
+          await Promise.all([
+            fetchSessionsByAccountIDUseCase(state),
+            countSessionsByAccountIDUseCase(state),
+          ])
+        },
+        revoke: async (sessionID) => {
+          await revokeSessionUseCase(state, sessionID)
+          await Promise.all([
+            fetchSessionsByAccountIDUseCase(state),
+            countSessionsByAccountIDUseCase(state),
+          ])
         },
       },
       activeTab: route.query.tab || 'config',

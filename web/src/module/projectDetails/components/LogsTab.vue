@@ -244,17 +244,20 @@ const filteredSessions = computed(() => {
 
 function formatDate(val) {
   if (!val) return '—'
-  try {
-    return new Date(val).toLocaleString(undefined, {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-    })
-  } catch {
-    return val
-  }
+  const normalized = val
+    .replace(' ', 'T')
+    .replace(/(\.\d{3})\d+/, '$1')
+    .replace(/\+00:00$/, 'Z')
+    .replace(/\+00$/, 'Z')
+  const d = new Date(normalized)
+  if (isNaN(d.getTime())) return val
+  return d.toLocaleString(undefined, {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
 }
 
 function initials(name) {

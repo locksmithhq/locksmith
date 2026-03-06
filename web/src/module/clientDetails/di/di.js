@@ -16,6 +16,8 @@ import { createSignupByClientIDRepository } from '../data/repository/createSignu
 import { createSignupByClientIDUseCase } from '../domain/usecase/createSignupByClientIDUseCase'
 import { updateSignupByClientIDRepository } from '../data/repository/updateSignupByClientIDRepository'
 import { updateSignupByClientIDUseCase } from '../domain/usecase/updateSignupByClientIDUseCase'
+import { fetchRolesRepository } from '../data/repository/fetchRolesRepository'
+import { fetchRolesUseCase } from '../domain/usecase/fetchRolesUseCase'
 
 const clientDetailControllerImpl = clientDetailController(
     {
@@ -27,6 +29,7 @@ const clientDetailControllerImpl = clientDetailController(
         getSignupByClientIDUseCase: getSignupByClientIDUseCase(getSignupByClientIDRepository(axiosInstance)),
         createSignupByClientIDUseCase: createSignupByClientIDUseCase(createSignupByClientIDRepository(axiosInstance)),
         updateSignupByClientIDUseCase: updateSignupByClientIDUseCase(updateSignupByClientIDRepository(axiosInstance)),
+        fetchRolesUseCase: fetchRolesUseCase(fetchRolesRepository(axiosInstance)),
     }
 )
 

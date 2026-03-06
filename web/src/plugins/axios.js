@@ -20,16 +20,28 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
-    if (error.response.status === 401) {
+    const url = error.config?.url || ''
+    const isLocksmithEndpoint = url.includes('/locksmith/')
+
+    if (error.response?.status === 401 && !isLocksmithEndpoint) {
       if (tries >= maxTries) {
+        tries = 0
+        window.location.replace('/')
         return Promise.reject(error)
       }
       tries++
-      const response = await axiosInstance.post('/locksmith/r', null, {
-        withCredentials: true,
-      })
-      if (response.status === 200) {
-        return axiosInstance(error.config)
+      try {
+        const response = await axiosInstance.post('/locksmith/r', null, {
+          withCredentials: true,
+        })
+        if (response.status === 200) {
+          tries = 0
+          return axiosInstance(error.config)
+        }
+      } catch {
+        tries = 0
+        window.location.replace('/')
+        return Promise.reject(error)
       }
     }
     return Promise.reject(error)

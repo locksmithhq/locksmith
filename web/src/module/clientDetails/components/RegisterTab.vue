@@ -274,6 +274,17 @@
           <v-expansion-panel-text>
             <v-row dense>
               <v-col cols="12">
+                <v-select
+                  v-model="controller.registerConfig.default_role_name"
+                  :items="controller.roles.map((r) => ({ title: r.title, value: r.title }))"
+                  :label="$t('clientDetails.defaultRole')"
+                  variant="outlined"
+                  density="comfortable"
+                  hide-details
+                  class="mb-4"
+                ></v-select>
+              </v-col>
+              <v-col cols="12">
                 <v-switch
                   v-model="controller.registerConfig.show_social"
                   :label="$t('clientDetails.socialRegister')"
@@ -351,6 +362,30 @@
         <v-icon start>mdi-content-save-outline</v-icon>
         {{ $t('clientDetails.saveChanges') }}
       </v-btn>
+
+      <v-alert
+        v-if="controller.saveError"
+        type="error"
+        variant="tonal"
+        density="compact"
+        class="mb-4"
+        closable
+        @click:close="controller.saveError = null"
+      >
+        {{ controller.saveError }}
+      </v-alert>
+
+      <v-alert
+        v-if="controller.saveSuccess"
+        type="success"
+        variant="tonal"
+        density="compact"
+        class="mb-4"
+        closable
+        @click:close="controller.saveSuccess = false"
+      >
+        {{ $t('clientDetails.savedSuccessfully') }}
+      </v-alert>
 
       <!-- Test Links -->
       <v-card elevation="0" border rounded="lg" class="pa-4 bg-grey-lighten-5">
@@ -504,9 +539,9 @@
                   class="text-center text-white"
                 >
                   <img
-                    v-if="controller.loginConfig.logo_url"
+                    v-if="controller.registerConfig.logo_url"
                     key="branding-logo"
-                    :src="controller.loginConfig.logo_url"
+                    :src="controller.registerConfig.logo_url"
                     alt="Logo"
                     style="max-height: 80px; max-width: 200px"
                     class="mb-4"
@@ -556,9 +591,9 @@
                   v-if="controller.registerConfig.layout === 'centered'"
                 >
                   <img
-                    v-if="controller.loginConfig.logo_url"
+                    v-if="controller.registerConfig.logo_url"
                     key="centered-logo"
-                    :src="controller.loginConfig.logo_url"
+                    :src="controller.registerConfig.logo_url"
                     alt="Logo"
                     style="max-height: 60px; max-width: 200px"
                   />

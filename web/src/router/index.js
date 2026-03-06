@@ -6,6 +6,7 @@ import Skeleton from '@/module/skeleton/view/skeleton.vue'
 import Project from '@/module/project/view/project.vue'
 import ProjectDetails from '@/module/projectDetails/view/projectDetails.vue'
 import ClientDetails from '@/module/clientDetails/view/clientDetails.vue'
+import UserDetails from '@/module/userDetails/view/userDetails.vue'
 import Dashboard from '@/module/dashborad/view/dashboard.vue'
 import ACL from '@/module/acl/view/acl.vue'
 import i18n from '@/plugins/i18n'
@@ -134,6 +135,11 @@ const routes = [
             path: 'projects/:project_id/clients/:client_id',
             name: 'client-details',
             component: ClientDetails,
+          },
+          {
+            path: 'projects/:project_id/users/:account_id',
+            name: 'user-details',
+            component: UserDetails,
           },
           {
             path: 'acl',

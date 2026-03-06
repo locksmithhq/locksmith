@@ -384,6 +384,30 @@
         {{ $t('clientDetails.saveChanges') }}
       </v-btn>
 
+      <v-alert
+        v-if="controller.saveError"
+        type="error"
+        variant="tonal"
+        density="compact"
+        class="mb-4"
+        closable
+        @click:close="controller.saveError = null"
+      >
+        {{ controller.saveError }}
+      </v-alert>
+
+      <v-alert
+        v-if="controller.saveSuccess"
+        type="success"
+        variant="tonal"
+        density="compact"
+        class="mb-4"
+        closable
+        @click:close="controller.saveSuccess = false"
+      >
+        {{ $t('clientDetails.savedSuccessfully') }}
+      </v-alert>
+
       <!-- Test Links -->
       <v-card elevation="0" border rounded="lg" class="pa-4 bg-grey-lighten-5">
         <div class="d-flex align-center mb-4">

@@ -34,10 +34,6 @@
               <v-icon start size="18">mdi-account-group-outline</v-icon>
               {{ $t('projectDetails.tabs.users') }}
             </v-tab>
-            <v-tab value="logs" class="text-capitalize font-weight-medium">
-              <v-icon start size="18">mdi-history</v-icon>
-              {{ $t('projectDetails.tabs.logs') }}
-            </v-tab>
           </v-tabs>
 
           <v-divider />
@@ -56,9 +52,6 @@
               <v-window-item value="accounts">
                 <accounts-tab :controller="controller" />
               </v-window-item>
-              <v-window-item value="logs">
-                <logs-tab :controller="controller" />
-              </v-window-item>
             </v-window>
           </v-card-text>
         </v-card>
@@ -73,7 +66,6 @@ import { projectDetailControllerImpl } from '../di/di'
 import ConfigTab from '../components/ConfigTab.vue'
 import OAuthClientsTab from '../components/OAuthClientsTab.vue'
 import AccountsTab from '../components/AccountsTab.vue'
-import LogsTab from '../components/LogsTab.vue'
 import RolesTab from '../components/RolesTab.vue'
 
 const controller = projectDetailControllerImpl()

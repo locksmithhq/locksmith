@@ -60,6 +60,14 @@
               {{ account.role_name || $t('users.noRole') }}
             </v-chip>
             <v-btn
+              icon="mdi-devices"
+              variant="text"
+              size="x-small"
+              color="secondary"
+              :title="$t('users.viewDevices')"
+              :to="`/${$route.params.locale}/projects/${$route.params.id}/users/${account.id}`"
+            />
+            <v-btn
               icon="mdi-pencil-outline"
               variant="text"
               size="x-small"
@@ -95,7 +103,145 @@
       <p class="text-body-2 text-grey mt-1">{{ $t('users.noUsersDesc') }}</p>
     </div>
 
-    <!-- Dialog -->
+    <!-- Device Sessions Dialog -->
+    <v-dialog v-model="controller.deviceDialog.open" max-width="780px" scrollable>
+      <v-card rounded="xl" elevation="0" border>
+        <v-card-item class="pa-6 pb-3">
+          <div class="d-flex align-start justify-space-between">
+            <div>
+              <v-card-title class="text-h6 font-weight-bold pa-0 section-title">
+                {{ $t('users.devicesTitle') }}
+              </v-card-title>
+              <v-card-subtitle class="text-body-2 pa-0 mt-1">
+                {{ controller.deviceDialog.accountName }}
+              </v-card-subtitle>
+            </div>
+            <v-btn
+              icon="mdi-close"
+              variant="text"
+              size="small"
+              color="grey"
+              @click="controller.deviceDialog.close"
+            />
+          </div>
+        </v-card-item>
+
+        <v-divider />
+
+        <v-card-text class="pa-4">
+          <div v-if="controller.deviceDialog.sessions.length === 0" class="d-flex flex-column align-center justify-center py-10 text-center">
+            <v-icon size="32" color="grey-lighten-1" class="mb-3">mdi-devices</v-icon>
+            <p class="text-subtitle-2 text-grey-darken-2">{{ $t('users.noDevices') }}</p>
+          </div>
+
+          <div v-else>
+            <div
+              v-for="(session, index) in controller.deviceDialog.sessions"
+              :key="session.id"
+              :class="{ 'mb-3': index < controller.deviceDialog.sessions.length - 1 }"
+            >
+              <v-card rounded="lg" elevation="0" class="session-card" :class="{ 'session-card--revoked': session.revoked }">
+                <!-- Card Header -->
+                <div class="d-flex align-center justify-space-between px-4 pt-3 pb-2">
+                  <div class="d-flex align-center" style="gap: 10px">
+                    <div class="device-icon-wrap flex-shrink-0">
+                      <v-icon size="18" color="primary">{{ deviceIcon(session.device_type) }}</v-icon>
+                    </div>
+                    <div>
+                      <div class="d-flex align-center" style="gap: 6px">
+                        <span class="text-body-2 font-weight-bold section-title">
+                          {{ session.browser || '—' }}
+                          <span v-if="session.browser_version" class="font-weight-regular text-caption section-subtitle"> {{ session.browser_version }}</span>
+                        </span>
+                        <v-chip
+                          :color="session.revoked ? 'error' : 'success'"
+                          variant="tonal"
+                          size="x-small"
+                          class="font-weight-bold"
+                        >
+                          {{ session.revoked ? $t('logs.revoked') : $t('logs.active') }}
+                        </v-chip>
+                      </div>
+                      <p class="text-caption section-subtitle mb-0">
+                        {{ session.client_name }}
+                      </p>
+                    </div>
+                  </div>
+                  <v-btn
+                    v-if="!session.revoked"
+                    variant="tonal"
+                    color="error"
+                    size="small"
+                    rounded="lg"
+                    :loading="session._revoking"
+                    class="flex-shrink-0"
+                    @click="handleRevoke(session)"
+                  >
+                    {{ $t('users.revokeAccess') }}
+                  </v-btn>
+                </div>
+
+                <v-divider />
+
+                <!-- Detail Grid -->
+                <div class="px-4 py-3 session-detail-grid">
+                  <div class="detail-item">
+                    <span class="detail-label">{{ $t('users.deviceType') }}</span>
+                    <span class="detail-value">{{ session.device_type || '—' }}</span>
+                  </div>
+                  <div class="detail-item">
+                    <span class="detail-label">{{ $t('users.deviceName') }}</span>
+                    <span class="detail-value">{{ session.device_name || '—' }}</span>
+                  </div>
+                  <div class="detail-item">
+                    <span class="detail-label">{{ $t('users.os') }}</span>
+                    <span class="detail-value">{{ session.os ? session.os + (session.os_version ? ' ' + session.os_version : '') : '—' }}</span>
+                  </div>
+                  <div class="detail-item">
+                    <span class="detail-label">{{ $t('users.ipAddress') }}</span>
+                    <span class="detail-value">{{ session.ip_address || '—' }}</span>
+                  </div>
+                  <div class="detail-item">
+                    <span class="detail-label">{{ $t('users.location') }}</span>
+                    <span class="detail-value">{{ [session.location_city, session.location_region, session.location_country].filter(Boolean).join(', ') || '—' }}</span>
+                  </div>
+                  <div class="detail-item">
+                    <span class="detail-label">{{ $t('users.lastActivity') }}</span>
+                    <span class="detail-value">{{ formatDate(session.last_activity) }}</span>
+                  </div>
+                  <div class="detail-item">
+                    <span class="detail-label">{{ $t('users.createdAt') }}</span>
+                    <span class="detail-value">{{ formatDate(session.created_at) }}</span>
+                  </div>
+                  <div class="detail-item">
+                    <span class="detail-label">{{ $t('users.expiresAt') }}</span>
+                    <span class="detail-value">{{ formatDate(session.expires_at) }}</span>
+                  </div>
+                  <div v-if="session.revoked_reason" class="detail-item detail-item--full">
+                    <span class="detail-label">{{ $t('users.revokedReason') }}</span>
+                    <span class="detail-value">{{ session.revoked_reason }}</span>
+                  </div>
+                </div>
+              </v-card>
+            </div>
+          </div>
+        </v-card-text>
+
+        <v-card-actions v-if="controller.deviceDialog.filter.totalPages > 1" class="pa-4 pt-0">
+          <v-pagination
+            v-model="controller.deviceDialog.filter.page"
+            :length="controller.deviceDialog.filter.totalPages"
+            density="comfortable"
+            rounded="lg"
+            active-color="primary"
+            variant="flat"
+            @update:model-value="controller.deviceDialog.fetch"
+          />
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- Account Dialog -->
     <v-dialog v-model="controller.account.dialog" max-width="500px" persistent scrollable>
       <v-card rounded="xl" elevation="0" border>
         <v-card-item class="pa-6 pb-3">
@@ -229,6 +375,44 @@ const props = defineProps({
     required: true,
   },
 })
+
+function deviceIcon(deviceType) {
+  const icons = {
+    mobile: 'mdi-cellphone',
+    desktop: 'mdi-monitor',
+    tablet: 'mdi-tablet',
+    tv: 'mdi-television',
+    watch: 'mdi-watch',
+  }
+  return icons[deviceType] || 'mdi-devices'
+}
+
+function formatDate(val) {
+  if (!val) return '—'
+  const normalized = val
+    .replace(' ', 'T')
+    .replace(/(\.\d{3})\d+/, '$1')
+    .replace(/\+00:00$/, 'Z')
+    .replace(/\+00$/, 'Z')
+  const d = new Date(normalized)
+  if (isNaN(d.getTime())) return val
+  return d.toLocaleString(undefined, {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+}
+
+async function handleRevoke(session) {
+  session._revoking = true
+  try {
+    await props.controller.deviceDialog.revoke(session.id)
+  } finally {
+    session._revoking = false
+  }
+}
 </script>
 
 <style scoped>
@@ -273,5 +457,51 @@ const props = defineProps({
   display: flex;
   align-items: center;
   justify-content: center;
+}
+.device-icon-wrap {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: linear-gradient(
+    135deg,
+    rgba(var(--v-theme-primary), 0.12),
+    rgba(var(--v-theme-primary), 0.06)
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.session-card {
+  background: #f9fafb;
+  border: 1px solid #eef0f6;
+}
+.session-card--revoked {
+  background: #fff5f5;
+  border-color: #fee2e2;
+}
+.session-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 24px;
+}
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.detail-item--full {
+  grid-column: 1 / -1;
+}
+.detail-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.detail-value {
+  font-size: 13px;
+  color: #111827;
+  font-weight: 500;
 }
 </style>

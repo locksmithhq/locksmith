@@ -49,7 +49,8 @@ const switchLocale = (newLocale) => {
   locale.value = newLocale
 }
 
-const logout = () => {
+const logout = async () => {
+  await fetch('/api/locksmith/logout', { method: 'POST' })
   router.push({ name: 'login' })
 }
 </script>

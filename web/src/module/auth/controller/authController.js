@@ -109,6 +109,16 @@ const authController =
     })
 
     onMounted(async () => {
+      // Ensure a stable device_id cookie exists for session fingerprinting
+      if (!document.cookie.split(';').some((c) => c.trim().startsWith('device_id='))) {
+        let deviceId = localStorage.getItem('device_id')
+        if (!deviceId) {
+          deviceId = crypto.randomUUID()
+          localStorage.setItem('device_id', deviceId)
+        }
+        document.cookie = `device_id=${deviceId}; path=/; max-age=31536000; samesite=lax`
+      }
+
       try {
         state.loading = true
         state.error = null
