@@ -34,6 +34,10 @@ type GetUserSessionByDeviceRepository interface {
 	Execute(context.Context, string, string, string) (domain.UserSession, error)
 }
 
+type UpdateUserSessionActivityRepository interface {
+	Execute(ctx context.Context, sessionID string) error
+}
+
 type CreateRefreshTokenRepository interface {
 	Execute(context.Context, domain.RefreshToken) (domain.RefreshToken, error)
 }

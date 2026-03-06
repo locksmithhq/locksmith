@@ -21,7 +21,7 @@ func (r *getSignupByClientIDRepository) Execute(ctx context.Context, clientID st
 		id, client_id, custom_css, custom_html, input_variant, layout,
 		show_social, use_custom_html, enabled,
 		background_color, background_image, background_type, primary_color, logo_url,
-		created_at, updated_at
+		default_role_name, created_at, updated_at
 	FROM oauth_clients_signup
 	WHERE client_id = $1`
 

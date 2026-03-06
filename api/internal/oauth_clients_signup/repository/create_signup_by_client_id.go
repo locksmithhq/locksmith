@@ -28,9 +28,10 @@ func (r *createSignupByClientIDRepository) Execute(ctx context.Context, signup d
 			background_image,
 			background_type,
 			primary_color,
-			logo_url
+			logo_url,
+			default_role_name
 		)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
 	`
 
 	_, err := r.database.ExecContext(
@@ -49,6 +50,7 @@ func (r *createSignupByClientIDRepository) Execute(ctx context.Context, signup d
 		signup.BackgroundType,
 		signup.PrimaryColor,
 		signup.LogoURL,
+		signup.DefaultRoleName,
 	)
 	if err != nil {
 		return err

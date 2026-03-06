@@ -58,13 +58,18 @@ func (u *registerUseCase) Execute(ctx context.Context, in input.Register) (outpu
 		)
 	}
 
+	defaultRole := signup.DefaultRoleName
+	if defaultRole == "" {
+		defaultRole = "user"
+	}
+
 	accountIn := accountInput.Account{
 		ProjectID:          client.ProjectID,
 		Name:               in.Name,
 		Email:              in.Email,
 		Username:           in.Email,
 		Password:           in.Password,
-		RoleName:           "user",
+		RoleName:           defaultRole,
 		MustChangePassword: false,
 	}
 

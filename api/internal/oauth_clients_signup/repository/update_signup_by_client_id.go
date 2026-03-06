@@ -28,7 +28,8 @@ func (r *updateSignupByClientIDRepository) Execute(ctx context.Context, signup d
 			background_image = $10,
 			background_type = $11,
 			primary_color = $12,
-			logo_url = $13
+			logo_url = $13,
+			default_role_name = $14
 		WHERE client_id = $1
 	`
 
@@ -48,6 +49,7 @@ func (r *updateSignupByClientIDRepository) Execute(ctx context.Context, signup d
 		signup.BackgroundType,
 		signup.PrimaryColor,
 		signup.LogoURL,
+		signup.DefaultRoleName,
 	)
 	if err != nil {
 		return err

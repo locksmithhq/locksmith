@@ -20,12 +20,13 @@ import (
 )
 
 type generateAccessTokenUseCase struct {
-	getAuthCodeByCodeRepository      contract.GetAuthCodeByCodeRepository
-	updateAuthCodeRepository         contract.UpdateAuthCodeRepository
-	getClientByClientIDRepository    contract.GetClientByClientIDRepository
-	createUserSessionRepository      contract.CreateUserSessionRepository
-	createRefreshTokenRepository     contract.CreateRefreshTokenRepository
-	getUserSessionByDeviceRepository contract.GetUserSessionByDeviceRepository
+	getAuthCodeByCodeRepository          contract.GetAuthCodeByCodeRepository
+	updateAuthCodeRepository             contract.UpdateAuthCodeRepository
+	getClientByClientIDRepository        contract.GetClientByClientIDRepository
+	createUserSessionRepository          contract.CreateUserSessionRepository
+	createRefreshTokenRepository         contract.CreateRefreshTokenRepository
+	getUserSessionByDeviceRepository     contract.GetUserSessionByDeviceRepository
+	updateUserSessionActivityRepository  contract.UpdateUserSessionActivityRepository
 }
 
 // Execute implements contract.GenerateAccessTokenUseCase.
@@ -132,8 +133,11 @@ func (u *generateAccessTokenUseCase) Execute(ctx context.Context, in input.Acces
 		existingSession, err := u.getUserSessionByDeviceRepository.Execute(ctx, authCode.AccountID, client.ID, in.DeviceID)
 		if err == nil {
 			userSession = existingSession
-			// TODO: Update last_activity
 		}
+	}
+
+	if userSession.ID != "" {
+		_ = u.updateUserSessionActivityRepository.Execute(ctx, userSession.ID)
 	}
 
 	if userSession.ID == "" {
@@ -215,13 +219,15 @@ func NewGenerateAccessTokenUseCase(
 	createUserSessionRepository contract.CreateUserSessionRepository,
 	createRefreshTokenRepository contract.CreateRefreshTokenRepository,
 	getUserSessionByDeviceRepository contract.GetUserSessionByDeviceRepository,
+	updateUserSessionActivityRepository contract.UpdateUserSessionActivityRepository,
 ) contract.GenerateAccessTokenUseCase {
 	return &generateAccessTokenUseCase{
-		getAuthCodeByCodeRepository:      getAuthCodeByCodeRepository,
-		updateAuthCodeRepository:         updateAuthCodeRepository,
-		getClientByClientIDRepository:    getClientByClientIDRepository,
-		createUserSessionRepository:      createUserSessionRepository,
-		createRefreshTokenRepository:     createRefreshTokenRepository,
-		getUserSessionByDeviceRepository: getUserSessionByDeviceRepository,
+		getAuthCodeByCodeRepository:         getAuthCodeByCodeRepository,
+		updateAuthCodeRepository:            updateAuthCodeRepository,
+		getClientByClientIDRepository:       getClientByClientIDRepository,
+		createUserSessionRepository:         createUserSessionRepository,
+		createRefreshTokenRepository:        createRefreshTokenRepository,
+		getUserSessionByDeviceRepository:    getUserSessionByDeviceRepository,
+		updateUserSessionActivityRepository: updateUserSessionActivityRepository,
 	}
 }

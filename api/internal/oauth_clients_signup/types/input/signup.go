@@ -18,6 +18,7 @@ type Signup struct {
 	BackgroundType  string `json:"background_type"`
 	PrimaryColor    string `json:"primary_color"`
 	LogoURL         string `json:"logo_url"`
+	DefaultRoleName string `json:"default_role_name"`
 }
 
 func (in Signup) ToSignupDomain() domain.Signup {
@@ -34,5 +35,6 @@ func (in Signup) ToSignupDomain() domain.Signup {
 		BackgroundType:  database.ParseNull(in.BackgroundType),
 		PrimaryColor:    database.ParseNull(in.PrimaryColor),
 		LogoURL:         database.ParseNull(in.LogoURL),
+		DefaultRoleName: in.DefaultRoleName,
 	}
 }

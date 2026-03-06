@@ -17,6 +17,7 @@ func NewGenerateAccessTokenHandler() contract.GenerateAccessTokenHandler {
 			repository.NewCreateUserSessionRepository(database.GetConnection()),
 			repository.NewCreateRefreshTokenRepository(database.GetConnection()),
 			repository.NewGetUserSessionByDeviceRepository(database.GetConnection()),
+			repository.NewUpdateUserSessionActivityRepository(database.GetConnection()),
 		),
 	)
 }
