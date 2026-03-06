@@ -2,7 +2,6 @@ package repository
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/booscaaa/initializers/postgres/types"
 	"github.com/locksmithhq/locksmith/api/internal/core/types/stackerror"
@@ -10,11 +9,11 @@ import (
 	"github.com/locksmithhq/locksmith/api/internal/session/domain"
 )
 
-type fetchSessionsByProjectIDRepository struct {
+type fetchSessionsByAccountIDRepository struct {
 	database types.Database
 }
 
-func (r *fetchSessionsByProjectIDRepository) Execute(ctx context.Context, projectID string, page, limit int, search string) ([]domain.Session, error) {
+func (r *fetchSessionsByAccountIDRepository) Execute(ctx context.Context, projectID, accountID string, page, limit int) ([]domain.Session, error) {
 	var sessions []domain.Session
 	offset := (page - 1) * limit
 
@@ -43,32 +42,19 @@ func (r *fetchSessionsByProjectIDRepository) Execute(ctx context.Context, projec
 		FROM user_sessions us
 		JOIN accounts a ON a.id = us.account_id
 		JOIN oauth_clients oc ON oc.id = us.client_id
-		WHERE oc.project_id = $1
+		WHERE oc.project_id = $1 AND us.account_id = $2
+		ORDER BY us.created_at DESC
+		LIMIT $3 OFFSET $4
 	`
 
-	args := []interface{}{projectID}
-	argIdx := 2
-
-	if search != "" {
-		query += fmt.Sprintf(
-			` AND (a.name ILIKE $%d OR a.email ILIKE $%d OR COALESCE(us.ip_address::text, '') ILIKE $%d OR COALESCE(us.browser, '') ILIKE $%d)`,
-			argIdx, argIdx, argIdx, argIdx,
-		)
-		args = append(args, "%"+search+"%")
-		argIdx++
-	}
-
-	query += fmt.Sprintf(` ORDER BY us.created_at DESC LIMIT $%d OFFSET $%d`, argIdx, argIdx+1)
-	args = append(args, limit, offset)
-
-	err := r.database.SelectContext(ctx, &sessions, query, args...)
+	err := r.database.SelectContext(ctx, &sessions, query, projectID, accountID, limit, offset)
 	if err != nil {
-		return nil, stackerror.NewRepositoryError("FetchSessionsByProjectIDRepository", err)
+		return nil, stackerror.NewRepositoryError("FetchSessionsByAccountIDRepository", err)
 	}
 
 	return sessions, nil
 }
 
-func NewFetchSessionsByProjectIDRepository(database types.Database) contract.FetchSessionsByProjectIDRepository {
-	return &fetchSessionsByProjectIDRepository{database: database}
+func NewFetchSessionsByAccountIDRepository(database types.Database) contract.FetchSessionsByAccountIDRepository {
+	return &fetchSessionsByAccountIDRepository{database: database}
 }

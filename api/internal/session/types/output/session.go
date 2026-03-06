@@ -13,6 +13,7 @@ type Session struct {
 	OS              string `json:"os"`
 	OSVersion       string `json:"os_version"`
 	LocationCountry string `json:"location_country"`
+	LocationRegion  string `json:"location_region"`
 	LocationCity    string `json:"location_city"`
 	Revoked         bool   `json:"revoked"`
 	RevokedReason   string `json:"revoked_reason"`
@@ -36,6 +37,7 @@ func NewSessionFromDomain(s domain.Session) Session {
 		OS:              s.OS,
 		OSVersion:       s.OSVersion,
 		LocationCountry: s.LocationCountry,
+		LocationRegion:  s.LocationRegion,
 		LocationCity:    s.LocationCity,
 		Revoked:         s.Revoked,
 		RevokedReason:   s.RevokedReason,

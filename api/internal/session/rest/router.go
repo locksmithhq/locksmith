@@ -14,5 +14,18 @@ func InitializeSessionRouter(router chi.Router) {
 			Get("/projects/{project_id}/sessions", di.NewFetchSessionsByProjectIDHandler().Execute)
 		r.With(locksmith.AclMiddleware("domain:locksmith", "module:sessions", "action:read:all")).
 			Get("/projects/{project_id}/sessions/count", di.NewCountSessionsByProjectIDHandler().Execute)
+
+		r.With(locksmith.AclMiddleware("domain:locksmith", "module:sessions", "action:read:all")).
+			Get("/projects/{project_id}/accounts/{account_id}/sessions", di.NewFetchSessionsByAccountIDHandler().Execute)
+		r.With(locksmith.AclMiddleware("domain:locksmith", "module:sessions", "action:read:all")).
+			Get("/projects/{project_id}/accounts/{account_id}/sessions/count", di.NewCountSessionsByAccountIDHandler().Execute)
+
+		r.With(locksmith.AclMiddleware("domain:locksmith", "module:sessions", "action:revoke")).
+			Delete("/projects/{project_id}/sessions/{session_id}", di.NewRevokeSessionHandler().Execute)
+
+		r.With(locksmith.AclMiddleware("domain:locksmith", "module:sessions", "action:read:all")).
+			Get("/projects/{project_id}/accounts/{account_id}/refresh-tokens", di.NewFetchRefreshTokensByAccountIDHandler().Execute)
+		r.With(locksmith.AclMiddleware("domain:locksmith", "module:sessions", "action:read:all")).
+			Get("/projects/{project_id}/accounts/{account_id}/refresh-tokens/count", di.NewCountRefreshTokensByAccountIDHandler().Execute)
 	})
 }

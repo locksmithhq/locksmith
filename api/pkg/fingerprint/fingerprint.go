@@ -63,6 +63,10 @@ func Parse(r *http.Request) Fingerprint {
 	return fp
 }
 
+func ExtractIP(r *http.Request) string {
+	return extractIP(r)
+}
+
 func extractIP(r *http.Request) string {
 	// Check X-Forwarded-For (proxy/nginx)
 	if xff := r.Header.Get("X-Forwarded-For"); xff != "" {

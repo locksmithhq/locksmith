@@ -11,6 +11,7 @@ type Session struct {
 	OS              string `json:"os" db:"os"`
 	OSVersion       string `json:"os_version" db:"os_version"`
 	LocationCountry string `json:"location_country" db:"location_country"`
+	LocationRegion  string `json:"location_region" db:"location_region"`
 	LocationCity    string `json:"location_city" db:"location_city"`
 	Revoked         bool   `json:"revoked" db:"revoked"`
 	RevokedReason   string `json:"revoked_reason" db:"revoked_reason"`

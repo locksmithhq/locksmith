@@ -19,6 +19,7 @@ func InitializeAccountsRouter(router chi.Router) {
 		r.With(locksmith.AclMiddleware("domain:locksmith", "module:accounts", "action:update:one")).Put("/projects/{project_id}/accounts/{account_id}", di.NewUpdateAccountHandler().Execute)
 		r.With(locksmith.AclMiddleware("domain:locksmith", "module:accounts", "action:read:all")).Get("/projects/{project_id}/accounts", di.NewFetchAccountsByProjectIDHandler().Execute)
 		r.With(locksmith.AclMiddleware("domain:locksmith", "module:accounts", "action:read:all")).Get("/projects/{project_id}/accounts/count", di.NewCountAccountsByProjectIDHandler().Execute)
+		r.With(locksmith.AclMiddleware("domain:locksmith", "module:accounts", "action:read:all")).Get("/projects/{project_id}/accounts/{id}", di.NewGetAccountByProjectIDAndIDHandler().Execute)
 	})
 
 	router.Group(func(r chi.Router) {

@@ -13,6 +13,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/locksmithhq/locksmith-go"
 	"github.com/locksmithhq/locksmith/api/internal/core/types/stackerror"
+	"github.com/locksmithhq/locksmith/api/pkg/fingerprint"
 )
 
 func InitializeLocksmithRouter(router chi.Router) {
@@ -53,8 +54,21 @@ func InitializeLocksmithRouter(router chi.Router) {
 			return
 		}
 
+		// Build request forwarding browser's real fingerprint headers
 		baseURL := os.Getenv("LOCKSMITH_BASE_URL")
-		resp, err := http.Post(baseURL+"/api/oauth2/access-token", "application/json", bytes.NewReader(jsonBody))
+		tokenReq, err := http.NewRequest(http.MethodPost, baseURL+"/api/oauth2/access-token", bytes.NewReader(jsonBody))
+		if err != nil {
+			stackerror.HttpResponse(w, "CallbackHandler", err)
+			return
+		}
+		tokenReq.Header.Set("Content-Type", "application/json")
+		tokenReq.Header.Set("User-Agent", r.UserAgent())
+		tokenReq.Header.Set("X-Forwarded-For", fingerprint.ExtractIP(r))
+		if deviceID, err := r.Cookie("device_id"); err == nil {
+			tokenReq.Header.Set("X-Device-ID", deviceID.Value)
+		}
+
+		resp, err := http.DefaultClient.Do(tokenReq)
 		if err != nil {
 			stackerror.HttpResponse(w, "CallbackHandler", err)
 			return
@@ -90,6 +104,31 @@ func InitializeLocksmithRouter(router chi.Router) {
 		http.Redirect(w, r, redirectUrl, http.StatusFound)
 	})
 
+	router.Post("/locksmith/logout", func(w http.ResponseWriter, r *http.Request) {
+		domain := getDomainFromRequest(r)
+		http.SetCookie(w, &http.Cookie{
+			Name:     "LOCKSMITHACCESSTOKEN",
+			Value:    "",
+			Path:     "/",
+			Domain:   domain,
+			MaxAge:   -1,
+			Secure:   true,
+			HttpOnly: true,
+			SameSite: http.SameSiteLaxMode,
+		})
+		http.SetCookie(w, &http.Cookie{
+			Name:     "LOCKSMITHREFRESHTOKEN",
+			Value:    "",
+			Path:     "/",
+			Domain:   domain,
+			MaxAge:   -1,
+			Secure:   true,
+			HttpOnly: true,
+			SameSite: http.SameSiteLaxMode,
+		})
+		w.WriteHeader(http.StatusNoContent)
+	})
+
 	router.Get("/locksmith/status", func(w http.ResponseWriter, r *http.Request) {
 		cookie, err := r.Cookie("LOCKSMITHACCESSTOKEN")
 		if err != nil {
@@ -99,20 +138,27 @@ func InitializeLocksmithRouter(router chi.Router) {
 		accessToken := cookie.Value
 
 		if _, valid := locksmith.VerifyToken(accessToken); !valid {
+			domain := getDomainFromRequest(r)
 			http.SetCookie(w, &http.Cookie{
-				Name:   "LOCKSMITHACCESSTOKEN",
-				Value:  "",
-				MaxAge: -1,
-				Path:   "/",
+				Name:     "LOCKSMITHACCESSTOKEN",
+				Value:    "",
+				Path:     "/",
+				Domain:   domain,
+				MaxAge:   -1,
+				Secure:   true,
+				HttpOnly: true,
+				SameSite: http.SameSiteLaxMode,
 			})
-
 			http.SetCookie(w, &http.Cookie{
-				Name:   "LOCKSMITHREFRESHTOKEN",
-				Value:  "",
-				MaxAge: -1,
-				Path:   "/",
+				Name:     "LOCKSMITHREFRESHTOKEN",
+				Value:    "",
+				Path:     "/",
+				Domain:   domain,
+				MaxAge:   -1,
+				Secure:   true,
+				HttpOnly: true,
+				SameSite: http.SameSiteLaxMode,
 			})
-
 			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
@@ -130,7 +176,28 @@ func InitializeLocksmithRouter(router chi.Router) {
 			cookie.Value,
 		))
 		if err != nil {
-			stackerror.HttpResponse(w, "CallbackHandler", err)
+			domain := getDomainFromRequest(r)
+			http.SetCookie(w, &http.Cookie{
+				Name:     "LOCKSMITHACCESSTOKEN",
+				Value:    "",
+				Path:     "/",
+				Domain:   domain,
+				MaxAge:   -1,
+				Secure:   true,
+				HttpOnly: true,
+				SameSite: http.SameSiteLaxMode,
+			})
+			http.SetCookie(w, &http.Cookie{
+				Name:     "LOCKSMITHREFRESHTOKEN",
+				Value:    "",
+				Path:     "/",
+				Domain:   domain,
+				MaxAge:   -1,
+				Secure:   true,
+				HttpOnly: true,
+				SameSite: http.SameSiteLaxMode,
+			})
+			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
 
@@ -139,6 +206,13 @@ func InitializeLocksmithRouter(router chi.Router) {
 }
 
 const RefreshTokenMaxAge = 15 * 24 * 60 * 60 // 15 days
+
+func getDomainFromRequest(r *http.Request) string {
+	if domain := getDomainFromOrigin(r); domain != "" {
+		return domain
+	}
+	return getDomainFromHost(r.Host)
+}
 
 func getDomainFromOrigin(r *http.Request) string {
 	origin := r.Header.Get("Origin")
@@ -174,7 +248,7 @@ func getDomainFromHost(host string) string {
 }
 
 func setCookies(w http.ResponseWriter, r *http.Request, accessToken string, refreshToken string, expiresIn int) {
-	domain := getDomainFromOrigin(r)
+	domain := getDomainFromRequest(r)
 	http.SetCookie(w, &http.Cookie{
 		Name:     "LOCKSMITHACCESSTOKEN",
 		Value:    accessToken,
