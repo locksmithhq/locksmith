@@ -66,7 +66,7 @@ shell-api: ## Abre shell no container da API
 	@docker exec -it api /bin/sh
 
 shell-db: ## Abre shell no container do banco de dados
-	@docker exec -it database psql -U $${POSTGRES_USER:-postgres} -d $${POSTGRES_DB:-locksmith}
+	@docker exec -it --env-file $(ENV_FILE) database-locksmith psql -U $${POSTGRES_USER:-postgres} -d $${POSTGRES_DB:-locksmith}
 
 prune: ## Remove containers, networks e imagens não utilizadas
 	@echo "$(YELLOW)Removendo recursos Docker não utilizados...$(NC)"

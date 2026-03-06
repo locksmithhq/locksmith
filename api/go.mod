@@ -10,9 +10,10 @@ require (
 	github.com/go-chi/cors v1.2.2
 	github.com/google/uuid v1.6.0
 	github.com/lib/pq v1.10.9
-	github.com/locksmithhq/locksmith-go v1.0.1
+	github.com/locksmithhq/locksmith-go v1.0.2
 	github.com/mileusna/useragent v1.3.5
 	github.com/spf13/cobra v1.10.1
+	golang.org/x/crypto v0.45.0
 	gopkg.in/yaml.v2 v2.4.0
 )
 
@@ -33,7 +34,6 @@ require (
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/spf13/pflag v1.0.10 // indirect
 	github.com/stretchr/testify v1.11.1 // indirect
-	golang.org/x/crypto v0.45.0 // indirect
 	golang.org/x/sys v0.38.0 // indirect
 	golang.org/x/text v0.31.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
