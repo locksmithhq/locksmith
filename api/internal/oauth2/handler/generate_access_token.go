@@ -5,10 +5,10 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/locksmithhq/locksmith-go"
 	"github.com/locksmithhq/locksmith/api/internal/core/types/stackerror"
 	"github.com/locksmithhq/locksmith/api/internal/oauth2/contract"
 	"github.com/locksmithhq/locksmith/api/internal/oauth2/types/input"
-	"github.com/locksmithhq/locksmith/api/pkg/fingerprint"
 )
 
 type generateAccessTokenHandler struct {
@@ -28,7 +28,7 @@ func (h *generateAccessTokenHandler) Execute(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	fp := fingerprint.Parse(r)
+	fp := locksmith.Parse(r)
 	req.DeviceID = r.Header.Get("X-Device-ID")
 	req.IPAddress = fp.IPAddress
 	req.UserAgent = fp.UserAgent
