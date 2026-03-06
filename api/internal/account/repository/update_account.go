@@ -6,6 +6,7 @@ import (
 	"github.com/booscaaa/initializers/postgres/types"
 	"github.com/locksmithhq/locksmith/api/internal/account/contract"
 	"github.com/locksmithhq/locksmith/api/internal/account/domain"
+	"github.com/locksmithhq/locksmith/api/internal/core/hasher"
 	"github.com/locksmithhq/locksmith/api/internal/core/types/stackerror"
 )
 
@@ -17,12 +18,21 @@ type updateAccountRepository struct {
 func (r *updateAccountRepository) Execute(ctx context.Context, entity domain.Account) (domain.Account, error) {
 	var account domain.Account
 
-	query := `UPDATE accounts SET 
-		name = $1, 
-		email = $2, 
-		username = $3, 
+	passwordValue := entity.Password
+	if passwordValue != "" {
+		hashed, err := hasher.Hash(passwordValue)
+		if err != nil {
+			return domain.Account{}, stackerror.NewRepositoryError("UpdateAccountRepository", err)
+		}
+		passwordValue = hashed
+	}
+
+	query := `UPDATE accounts SET
+		name = $1,
+		email = $2,
+		username = $3,
 		role_name = $4,
-		password = CASE WHEN $5 = '' THEN password ELSE crypt($5, gen_salt('bf', 8)) END,
+		password = CASE WHEN $5 = '' THEN password ELSE $5 END,
 		must_change_password = $6,
 		updated_at = NOW()
 	WHERE id = $7 AND project_id = $8
@@ -34,7 +44,7 @@ func (r *updateAccountRepository) Execute(ctx context.Context, entity domain.Acc
 		entity.Email,
 		entity.Username,
 		entity.RoleName,
-		entity.Password,
+		passwordValue,
 		entity.MustChangePassword,
 		entity.ID,
 		entity.ProjectID,

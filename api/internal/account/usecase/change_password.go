@@ -5,11 +5,11 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/locksmithhq/locksmith-go"
 	"github.com/locksmithhq/locksmith/api/internal/account/contract"
 	"github.com/locksmithhq/locksmith/api/internal/account/types/input"
 	"github.com/locksmithhq/locksmith/api/internal/core/types/stackerror"
 	oauth2Contract "github.com/locksmithhq/locksmith/api/internal/oauth2/contract"
-	"github.com/locksmithhq/locksmith-go"
 )
 
 type changePasswordUseCase struct {
@@ -35,7 +35,7 @@ func (u *changePasswordUseCase) Execute(ctx context.Context, in input.ChangePass
 		)
 	}
 
-	if err := u.updateAccountPasswordRepository.Execute(ctx, claims.Data["sub"].(string), in.Password); err != nil {
+	if err := u.updateAccountPasswordRepository.Execute(ctx, claims.Sub, in.Password); err != nil {
 		return stackerror.NewUseCaseError(
 			"ChangePasswordUseCase",
 			err,
