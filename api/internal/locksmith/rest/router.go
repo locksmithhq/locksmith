@@ -1,8 +1,6 @@
 package rest
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
 	"net"
 	"net/http"
@@ -13,7 +11,6 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/locksmithhq/locksmith-go"
 	"github.com/locksmithhq/locksmith/api/internal/core/types/stackerror"
-	"github.com/locksmithhq/locksmith/api/pkg/fingerprint"
 )
 
 func InitializeLocksmithRouter(router chi.Router) {
@@ -32,62 +29,15 @@ func InitializeLocksmithRouter(router chi.Router) {
 			codeVerifier = cv.Value
 		}
 
-		type tokenRequest struct {
-			Code         string `json:"code"`
-			ClientID     string `json:"client_id"`
-			ClientSecret string `json:"client_secret"`
-			GrantType    string `json:"grant_type"`
-			CodeVerifier string `json:"code_verifier,omitempty"`
-		}
-
-		reqBody := tokenRequest{
-			Code:         code,
+		token, err := locksmith.GenerateAccessToken(r.Context(), r, locksmith.AccessTokenInput{
 			ClientID:     os.Getenv("LOCKSMITH_APP_CLIENT_ID"),
 			ClientSecret: os.Getenv("LOCKSMITH_APP_CLIENT_SECRET"),
 			GrantType:    "authorization_code",
+			Code:         code,
 			CodeVerifier: codeVerifier,
-		}
+		})
 
-		jsonBody, err := json.Marshal(reqBody)
 		if err != nil {
-			stackerror.HttpResponse(w, "CallbackHandler", err)
-			return
-		}
-
-		// Build request forwarding browser's real fingerprint headers
-		baseURL := os.Getenv("LOCKSMITH_BASE_URL")
-		tokenReq, err := http.NewRequest(http.MethodPost, baseURL+"/api/oauth2/access-token", bytes.NewReader(jsonBody))
-		if err != nil {
-			stackerror.HttpResponse(w, "CallbackHandler", err)
-			return
-		}
-		tokenReq.Header.Set("Content-Type", "application/json")
-		tokenReq.Header.Set("User-Agent", r.UserAgent())
-		tokenReq.Header.Set("X-Forwarded-For", fingerprint.ExtractIP(r))
-		if deviceID, err := r.Cookie("device_id"); err == nil {
-			tokenReq.Header.Set("X-Device-ID", deviceID.Value)
-		}
-
-		resp, err := http.DefaultClient.Do(tokenReq)
-		if err != nil {
-			stackerror.HttpResponse(w, "CallbackHandler", err)
-			return
-		}
-		defer resp.Body.Close()
-
-		if resp.StatusCode != http.StatusOK {
-			var apiErr locksmith.ApiError
-			json.NewDecoder(resp.Body).Decode(&apiErr)
-			stackerror.HttpResponse(w, "CallbackHandler", apiErr)
-			return
-		}
-
-		var token struct {
-			AccessToken  string `json:"access_token"`
-			RefreshToken string `json:"refresh_token"`
-			ExpiresIn    int    `json:"expires_in"`
-		}
-		if err := json.NewDecoder(resp.Body).Decode(&token); err != nil {
 			stackerror.HttpResponse(w, "CallbackHandler", err)
 			return
 		}
@@ -172,9 +122,9 @@ func InitializeLocksmithRouter(router chi.Router) {
 			return
 		}
 
-		token, err := locksmith.GenerateRefreshToken(r.Context(), locksmith.NewRefreshAccessTokenInput(
-			cookie.Value,
-		))
+		token, err := locksmith.GenerateRefreshToken(r.Context(), locksmith.RefreshAccessTokenInput{
+			RefreshToken: cookie.Value,
+		})
 		if err != nil {
 			domain := getDomainFromRequest(r)
 			http.SetCookie(w, &http.Cookie{
