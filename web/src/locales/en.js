@@ -47,8 +47,11 @@ const en = {
     title: 'Dashboard',
     description: 'Project and OAuth client analysis',
     totalProjects: 'Total Projects',
-    activeClients: 'Active Clients',
-    aclRoles: 'ACL Roles',
+    totalUsers: 'Total Users',
+    activeSessions: 'Active Sessions',
+    totalClients: 'OAuth Clients',
+    loginsPerDay: 'Logins per Day (last 30 days)',
+    sessionsByDevice: 'Sessions by Device',
   },
   projectDetails: {
     title: 'Project Details',

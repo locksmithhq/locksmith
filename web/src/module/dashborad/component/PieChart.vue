@@ -3,7 +3,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { ref, onMounted, onBeforeUnmount, watch } from 'vue'
 import * as echarts from 'echarts'
 
 const props = defineProps({
@@ -76,6 +76,17 @@ onBeforeUnmount(() => {
   window.removeEventListener('resize', resizeChart)
   chartInstance?.dispose()
 })
+
+watch(
+  () => props.data,
+  () => {
+    if (chartInstance) {
+      chartInstance.setOption({
+        series: [{ data: props.data }],
+      })
+    }
+  },
+)
 </script>
 
 <style scoped>

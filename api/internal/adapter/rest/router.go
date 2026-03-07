@@ -10,6 +10,7 @@ import (
 	accountsRest "github.com/locksmithhq/locksmith/api/internal/account/rest"
 	"github.com/locksmithhq/locksmith/api/internal/acl"
 	aclRest "github.com/locksmithhq/locksmith/api/internal/acl/rest"
+	dashboardRest "github.com/locksmithhq/locksmith/api/internal/dashboard/rest"
 	locksmithRest "github.com/locksmithhq/locksmith/api/internal/locksmith/rest"
 	oauth2Rest "github.com/locksmithhq/locksmith/api/internal/oauth2/rest"
 	oauthClientsRest "github.com/locksmithhq/locksmith/api/internal/oauth_clients/rest"
@@ -45,6 +46,7 @@ func Initialize() {
 		oauthClientsSignupRest.InitializeOauthClientsSignupRouter(r)
 		accountsRest.InitializeAccountsRouter(r)
 		sessionRest.InitializeSessionRouter(r)
+		dashboardRest.InitializeDashboardRouter(r)
 		aclRest.InitializeAclRouter(r)
 		r.Post("/acl/enforce", acl.Enforcer)
 

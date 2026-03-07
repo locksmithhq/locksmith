@@ -47,8 +47,11 @@ const ptBr = {
     title: 'Dashboard',
     description: 'Análise de projetos e clientes OAuth',
     totalProjects: 'Total de Projetos',
-    activeClients: 'Clientes Ativos',
-    aclRoles: 'Funções ACL',
+    totalUsers: 'Total de Usuários',
+    activeSessions: 'Sessões Ativas',
+    totalClients: 'OAuth Clients',
+    loginsPerDay: 'Logins por Dia (últimos 30 dias)',
+    sessionsByDevice: 'Sessões por Dispositivo',
   },
   projectDetails: {
     title: 'Detalhes do Projeto',

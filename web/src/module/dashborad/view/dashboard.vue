@@ -1,149 +1,99 @@
 <template>
-  <v-container fluid class="pa-6 bg-grey-lighten-4 fill-height align-start">
+  <v-container fluid class="pa-4 fill-height align-start page-bg">
     <v-row>
+      <!-- Header -->
       <v-col cols="12">
-        <div class="d-flex align-center justify-space-between mb-6">
-          <div>
-            <h1 class="text-h4 font-weight-bold text-grey-darken-3">
-              {{ $t('dashboard.title') }}
-            </h1>
-            <p class="text-subtitle-1 text-grey-darken-1">
-              {{ $t('dashboard.description') }}
-            </p>
-            <breadcrumb />
-          </div>
-        </div>
+        <breadcrumb class="mb-3" />
+        <h1 class="text-h5 font-weight-bold page-title">
+          {{ $t('dashboard.title') }}
+        </h1>
+        <p class="text-body-2 page-subtitle mt-1">
+          {{ $t('dashboard.description') }}
+        </p>
       </v-col>
 
-      <v-col cols="12" md="3">
-        <v-card
-          :to="{ name: 'projects' }"
-          class="rounded-lg"
-          elevation="2"
-          color="blue-lighten-5"
-        >
-          <v-card-text>
-            <div class="d-flex justify-space-between align-center mb-2">
-              <div
-                class="text-subtitle-1 text-blue-darken-2 font-weight-medium"
-              >
-                {{ $t('dashboard.totalProjects') }}
+      <!-- KPI Cards -->
+      <v-col cols="12" sm="6" lg="3">
+        <v-card :to="{ name: 'projects' }" elevation="0" rounded="lg" class="stat-card">
+          <v-card-text class="pa-5">
+            <div class="d-flex align-center justify-space-between mb-4">
+              <div class="stat-icon-wrap" style="background: rgba(var(--v-theme-primary), 0.1)">
+                <v-icon color="primary" size="20">mdi-folder-outline</v-icon>
               </div>
-              <v-icon color="blue-darken-2" size="small"
-                >mdi-folder-outline</v-icon
-              >
             </div>
-            <div class="text-h4 font-weight-bold mb-1 text-blue-darken-3">
-              1
+            <div class="text-h4 font-weight-bold stat-value mb-1">
+              {{ stats.total_projects ?? '-' }}
             </div>
-            <div class="text-caption text-success">
-              <v-icon size="x-small" color="success">mdi-arrow-up</v-icon> 2 new
-              this month
-            </div>
+            <div class="text-body-2 stat-label">{{ $t('dashboard.totalProjects') }}</div>
           </v-card-text>
         </v-card>
       </v-col>
-      <v-col cols="12" md="3">
-        <v-card class="rounded-lg" elevation="2" color="purple-lighten-5">
-          <v-card-text>
-            <div class="d-flex justify-space-between align-center mb-2">
-              <div
-                class="text-subtitle-1 text-purple-darken-2 font-weight-medium"
-              >
-                {{ $t('dashboard.activeClients') }}
-              </div>
-              <v-icon color="purple-darken-2" size="small"
-                >mdi-account-group-outline</v-icon
-              >
-            </div>
-            <div class="text-h4 font-weight-bold mb-1 text-purple-darken-3">
-              1
-            </div>
-            <div class="text-caption text-purple-darken-1">
-              Across 5 regions
-            </div>
-          </v-card-text>
-        </v-card>
-      </v-col>
-      <v-col cols="12" md="3">
-        <v-card
-          :to="{ name: 'acl' }"
-          class="rounded-lg"
-          elevation="2"
-          color="teal-lighten-5"
-        >
-          <v-card-text>
-            <div class="d-flex justify-space-between align-center mb-2">
-              <div
-                class="text-subtitle-1 text-teal-darken-2 font-weight-medium"
-              >
-                {{ $t('dashboard.aclRoles') }}
-              </div>
-              <v-icon color="teal-darken-2" size="small"
-                >mdi-shield-account-outline</v-icon
-              >
-            </div>
-            <div class="text-h4 font-weight-bold mb-1 text-teal-darken-3">
-              -
-            </div>
-            <div class="text-caption text-teal-darken-1">
-              {{ $t('acl.description') }}
-            </div>
-          </v-card-text>
-        </v-card>
-      </v-col>
-      <!-- <v-col cols="12" md="3">
-        <v-card class="rounded-lg" elevation="2" color="orange-lighten-5">
-          <v-card-text>
-            <div class="d-flex justify-space-between align-center mb-2">
-              <div
-                class="text-subtitle-1 text-orange-darken-2 font-weight-medium"
-              >
-                Pending Tasks
-              </div>
-              <v-icon color="orange-darken-2" size="small"
-                >mdi-clipboard-list-outline</v-icon
-              >
-            </div>
-            <div class="text-h4 font-weight-bold mb-1 text-orange-darken-3">
-              8
-            </div>
-            <div class="text-caption text-orange-darken-1">Needs attention</div>
-          </v-card-text>
-        </v-card>
-      </v-col>
-      <v-col cols="12" md="3">
-        <v-card class="rounded-lg" elevation="2" color="green-lighten-5">
-          <v-card-text>
-            <div class="d-flex justify-space-between align-center mb-2">
-              <div
-                class="text-subtitle-1 text-green-darken-2 font-weight-medium"
-              >
-                Revenue
-              </div>
-              <v-icon color="green-darken-2" size="small"
-                >mdi-currency-usd</v-icon
-              >
-            </div>
-            <div class="text-h4 font-weight-bold mb-1 text-green-darken-3">
-              $24k
-            </div>
-            <div class="text-caption text-success">
-              <v-icon size="x-small" color="success">mdi-arrow-up</v-icon>
-              +12% from last month
-            </div>
-          </v-card-text>
-        </v-card>
-      </v-col> -->
 
+      <v-col cols="12" sm="6" lg="3">
+        <v-card elevation="0" rounded="lg" class="stat-card">
+          <v-card-text class="pa-5">
+            <div class="d-flex align-center justify-space-between mb-4">
+              <div class="stat-icon-wrap" style="background: rgba(var(--v-theme-success), 0.1)">
+                <v-icon color="success" size="20">mdi-account-group-outline</v-icon>
+              </div>
+            </div>
+            <div class="text-h4 font-weight-bold stat-value mb-1">
+              {{ stats.total_users ?? '-' }}
+            </div>
+            <div class="text-body-2 stat-label">{{ $t('dashboard.totalUsers') }}</div>
+          </v-card-text>
+        </v-card>
+      </v-col>
+
+      <v-col cols="12" sm="6" lg="3">
+        <v-card elevation="0" rounded="lg" class="stat-card">
+          <v-card-text class="pa-5">
+            <div class="d-flex align-center justify-space-between mb-4">
+              <div class="stat-icon-wrap" style="background: rgba(103, 80, 164, 0.1)">
+                <v-icon color="deep-purple" size="20">mdi-shield-check-outline</v-icon>
+              </div>
+            </div>
+            <div class="text-h4 font-weight-bold stat-value mb-1">
+              {{ stats.active_sessions ?? '-' }}
+            </div>
+            <div class="text-body-2 stat-label">{{ $t('dashboard.activeSessions') }}</div>
+          </v-card-text>
+        </v-card>
+      </v-col>
+
+      <v-col cols="12" sm="6" lg="3">
+        <v-card elevation="0" rounded="lg" class="stat-card">
+          <v-card-text class="pa-5">
+            <div class="d-flex align-center justify-space-between mb-4">
+              <div class="stat-icon-wrap" style="background: rgba(var(--v-theme-warning), 0.1)">
+                <v-icon color="warning" size="20">mdi-application-outline</v-icon>
+              </div>
+            </div>
+            <div class="text-h4 font-weight-bold stat-value mb-1">
+              {{ stats.total_clients ?? '-' }}
+            </div>
+            <div class="text-body-2 stat-label">{{ $t('dashboard.totalClients') }}</div>
+          </v-card-text>
+        </v-card>
+      </v-col>
+
+      <!-- Charts -->
       <v-col cols="12" md="8">
-        <v-card class="rounded-lg pa-4" elevation="2">
-          <LineChart title="Project Activity" />
+        <v-card elevation="0" rounded="lg" class="stat-card pa-4">
+          <LineChart
+            :title="$t('dashboard.loginsPerDay')"
+            :xAxisData="lineChartXAxis"
+            :data="lineChartData"
+          />
         </v-card>
       </v-col>
+
       <v-col cols="12" md="4">
-        <v-card class="rounded-lg pa-4" elevation="2">
-          <PieChart title="Project Distribution" />
+        <v-card elevation="0" rounded="lg" class="stat-card pa-4">
+          <PieChart
+            :title="$t('dashboard.sessionsByDevice')"
+            :data="pieChartData"
+          />
         </v-card>
       </v-col>
     </v-row>
@@ -151,7 +101,69 @@
 </template>
 
 <script setup>
+import { ref, computed, onMounted } from 'vue'
 import breadcrumb from '@/module/core/component/breadcrumb.vue'
 import LineChart from '../component/LineChart.vue'
 import PieChart from '../component/PieChart.vue'
+import { axiosInstance } from '@/plugins/axios'
+
+const stats = ref({})
+
+const lineChartXAxis = computed(() =>
+  (stats.value.logins_per_day ?? []).map((d) => d.day),
+)
+const lineChartData = computed(() =>
+  (stats.value.logins_per_day ?? []).map((d) => d.count),
+)
+const pieChartData = computed(() =>
+  (stats.value.sessions_by_device ?? []).map((d) => ({
+    name: d.device,
+    value: d.count,
+  })),
+)
+
+onMounted(async () => {
+  try {
+    const { data } = await axiosInstance.get('/dashboard/stats')
+    stats.value = data
+  } catch (err) {
+    console.error('Failed to load dashboard stats:', err)
+  }
+})
 </script>
+
+<style scoped>
+.page-bg {
+  background: #f7f8fc;
+}
+
+.page-title {
+  color: #111827;
+}
+
+.page-subtitle {
+  color: #6b7280;
+}
+
+.stat-card {
+  background: #ffffff;
+  border: 1px solid #eef0f6;
+}
+
+.stat-icon-wrap {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stat-value {
+  color: #111827;
+}
+
+.stat-label {
+  color: #6b7280;
+}
+</style>
