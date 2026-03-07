@@ -4,102 +4,76 @@
     <v-col
       cols="12"
       md="6"
-      class="bg-white d-flex flex-column justify-center align-center pa-8 pa-md-16"
+      class="d-flex flex-column justify-center align-center pa-8 pa-md-12"
+      style="background: #f7f8fc"
     >
-      <div class="w-100" style="max-width: 440px">
+      <div class="w-100" style="max-width: 420px">
         <!-- Logo -->
-        <Logo />
-
-        <!-- Header -->
-        <div class="mb-8">
-          <h1 class="text-h4 font-weight-bold mb-2">
-            {{ $t('login.welcome_back') }}
-          </h1>
-          <p class="text-body-1 text-medium-emphasis">
-            {{ $t('login.welcome_back_subtitle') }}
-          </p>
+        <div class="mb-10">
+          <Logo />
         </div>
 
-        <!-- Toggle -->
-        <!-- <v-sheet class="bg-grey-lighten-4 rounded-lg pa-1 mb-8" elevation="0">
-          <v-item-group
-            mandatory
-            :disabled="controller.loading"
-            v-model="controller.loginOption"
-            selected-class="bg-primary"
-          >
-            <v-row no-gutters>
-              <v-col cols="6">
-                <v-item v-slot="{ isSelected, toggle }">
-                  <v-btn
-                    block
-                    flat
-                    class="text-medium-emphasis text-capitalize"
-                    height="44"
-                    :elevation="isSelected ? 2 : 0"
-                    :variant="isSelected ? 'flat' : 'text'"
-                    @click="toggle"
-                    >Sign In</v-btn
-                  >
-                </v-item>
-              </v-col>
-              <v-col cols="6">
-                <v-item v-slot="{ isSelected, toggle }">
-                  <v-btn
-                    block
-                    flat
-                    :variant="isSelected ? 'flat' : 'text'"
-                    class="text-medium-emphasis text-capitalize"
-                    :elevation="isSelected ? 2 : 0"
-                    height="44"
-                    @click="toggle"
-                    >Signup</v-btn
-                  >
-                </v-item>
-              </v-col>
-            </v-row>
-          </v-item-group>
-        </v-sheet> -->
+        <!-- Error -->
+        <v-alert
+          v-if="controller.error"
+          type="error"
+          variant="tonal"
+          rounded="lg"
+          density="compact"
+          class="mb-5 text-body-2"
+          closable
+          @click:close="controller.error = null"
+        >
+          {{ controller.error }}
+        </v-alert>
 
         <!-- Form -->
         <v-form
           @submit.prevent="controller.login"
           :disabled="controller.loading"
           ref="meuPingulin"
+          class="mb-5"
         >
+          <div class="field-label">{{ $t('login.email_label') }}</div>
           <v-text-field
-            v-model="controller.email"
-            :label="$t('login.email_label')"
+            v-model="controller.form.email"
             variant="outlined"
             prepend-inner-icon="mdi-email-outline"
             color="primary"
-            class="mb-4"
-            :rules="controller.emailRules"
+            class="mb-5"
+            :error-messages="controller.errors.email"
             rounded="lg"
             hide-details="auto"
+            density="comfortable"
+            bg-color="white"
+            placeholder="email@example.com"
             @keyup.enter="controller.login"
           />
 
+          <div class="field-label">{{ $t('login.password_label') }}</div>
           <v-text-field
-            v-model="controller.password"
-            :label="$t('login.password_label')"
+            v-model="controller.form.password"
             type="password"
             variant="outlined"
             prepend-inner-icon="mdi-lock-outline"
             color="primary"
-            class="mb-8"
-            :rules="controller.passwordRules"
+            class="mb-7"
+            :error-messages="controller.errors.password"
             rounded="lg"
-            @keyup.enter="controller.login"
             hide-details="auto"
+            density="comfortable"
+            bg-color="white"
+            placeholder="••••••••"
+            @keyup.enter="controller.login"
           />
 
           <v-btn
             block
-            color="#2563eb"
-            height="56"
-            class="text-capitalize text-body-1 font-weight-bold rounded-lg mb-8"
-            flat
+            color="primary"
+            height="50"
+            class="text-none font-weight-bold text-body-2"
+            rounded="lg"
+            elevation="0"
             @click="controller.login"
             :loading="controller.loading"
             :disabled="controller.loading"
@@ -108,31 +82,13 @@
           </v-btn>
         </v-form>
 
-        <!-- Divider -->
-        <!-- <div class="d-flex align-center mb-8">
-                    <v-divider></v-divider>
-                    <span class="mx-8 text-caption text-medium-emphasis text-uppercase text-no-wrap">Or Continue
-                        With</span>
-                    <v-divider></v-divider>
-                </div> -->
-
-        <!-- Socials -->
-        <!-- <div class="d-flex justify-center gap-4 mb-12">
-                    <v-btn icon="mdi-google" variant="outlined" color="grey-lighten-1"
-                        class="rounded-circle mx-2"></v-btn>
-                    <v-btn icon="mdi-apple" variant="flat" color="black" class="rounded-circle mx-2"></v-btn>
-                    <v-btn icon="mdi-facebook" variant="flat" color="#1877F2" class="rounded-circle mx-2"></v-btn>
-                </div> -->
-
         <!-- Footer -->
-        <p
-          class="text-caption text-medium-emphasis px-4"
-          style="line-height: 1.6"
-        >
+        <p class="login-footer text-center">
           {{ $t('login.footer_text') }}
         </p>
       </div>
     </v-col>
+
     <Keys />
   </v-row>
 </template>
@@ -144,3 +100,23 @@ import { loginControllerImpl } from '../di/di'
 
 const controller = loginControllerImpl()
 </script>
+
+<style scoped>
+.fill-height {
+  height: 100vh !important;
+}
+
+.field-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 6px;
+  letter-spacing: 0.01em;
+}
+
+.login-footer {
+  font-size: 11px;
+  color: #9ca3af;
+  line-height: 1.6;
+}
+</style>

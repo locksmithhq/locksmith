@@ -1,10 +1,17 @@
-import { onMounted, reactive, useTemplateRef } from 'vue'
+import { onMounted, reactive } from 'vue'
 import { useRoute } from 'vue-router'
 import { generateCodeVerifier, generateCodeChallenge } from '@/module/core/utils/pkce'
+import { useAppForm } from '@/module/core/composables/appForm'
+import { loginSchema } from '../const/loginSchema'
 
 const loginController =
   (authorizeApplicationUseCase, loginUseCase, getConfigUseCase) => () => {
     const route = useRoute()
+
+    const { fields, errors, handleSubmit } = useAppForm(loginSchema, {
+      email: '',
+      password: '',
+    })
 
     const state = reactive({
       clientId: null,
@@ -13,32 +20,22 @@ const loginController =
       stateParam: route.query.state || '',
       codeChallenge: '',
       codeChallengeMethod: 'S256',
-      loginOption: 0,
       loading: false,
-      email: '',
-      password: '',
-      emailRules: [
-        (v) => !!v || 'E-mail is required.',
-        (v) => /.+@.+/.test(v) || 'E-mail must be valid.',
-      ],
-      passwordRules: [
-        (v) => !!v || 'Password is required.',
-        (v) => v.length >= 2 || 'Password must be at least 5 characters long.',
-      ],
-      login: async () => {
-        await loginUseCase(state)
-      },
-      loginForm: useTemplateRef('meuPingulin'),
+      error: null,
+      form: fields,
+      errors,
+      // getters so loginUseCase can read state.email / state.password directly
+      get email() { return state.form.email },
+      get password() { return state.form.password },
+      login: handleSubmit(() => loginUseCase(state)),
     })
 
     onMounted(async () => {
       const codeVerifier = generateCodeVerifier()
       const codeChallenge = await generateCodeChallenge(codeVerifier)
 
-      // Store code_verifier in a short-lived cookie so the server-side callback can use it
       document.cookie = `pkce_cv=${codeVerifier}; path=/; max-age=600; samesite=lax`
 
-      // Ensure a stable device_id cookie exists for session fingerprinting
       if (!document.cookie.split(';').some((c) => c.trim().startsWith('device_id='))) {
         let deviceId = localStorage.getItem('device_id')
         if (!deviceId) {
