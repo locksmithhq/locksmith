@@ -31,3 +31,7 @@ type UpdateClientRepository interface {
 type DeleteClientRepository interface {
 	Execute(context.Context, string, string) error
 }
+
+type GetClientByCustomDomainRepository interface {
+	Execute(ctx context.Context, domain string) (string, error)
+}

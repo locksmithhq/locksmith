@@ -27,3 +27,7 @@ type UpdateClientUseCase interface {
 type DeleteClientUseCase interface {
 	Execute(context.Context, string, string) error
 }
+
+type ResolveCustomDomainUseCase interface {
+	Execute(ctx context.Context, hostname string) (string, error)
+}

@@ -21,3 +21,7 @@ type UpdateClientHandler interface {
 type DeleteClientHandler interface {
 	Execute(http.ResponseWriter, *http.Request)
 }
+
+type ResolveCustomDomainHandler interface {
+	Execute(http.ResponseWriter, *http.Request)
+}

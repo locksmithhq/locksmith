@@ -10,7 +10,6 @@ const clientDetailController = (usecase) => () => {
     client: {},
     isEdit: false,
     showLoginPreview: false,
-    customDomain: '',
     loginConfig: { enabled: true },
     registerConfig: { enabled: true },
     roles: [],
@@ -25,7 +24,6 @@ const clientDetailController = (usecase) => () => {
     saveClient: async () => {
       await usecase.updateClientUseCase(state)
       state.isEdit = false
-      state.saveCustomDomain()
     },
     saveRegisterConfig: async () => {
       state.saving = true
@@ -43,24 +41,6 @@ const clientDetailController = (usecase) => () => {
         state.saveError = err?.response?.data || 'Error saving register config'
       } finally {
         state.saving = false
-      }
-    },
-    saveCustomDomain: () => {
-      if (state.client.client_id) {
-        localStorage.setItem(
-          `custom_domain_${state.client.client_id}`,
-          state.customDomain,
-        )
-      }
-    },
-    loadCustomDomain: () => {
-      if (state.client.client_id) {
-        const saved = localStorage.getItem(
-          `custom_domain_${state.client.client_id}`,
-        )
-        if (saved) {
-          state.customDomain = saved
-        }
       }
     },
     saving: false,

@@ -6,14 +6,14 @@ import (
 )
 
 type Client struct {
-	ProjectID    string        `json:"project_id"`
-	Name         string        `json:"name"`
-	ClientID     string        `json:"client_id"`
-	ClientSecret string        `json:"client_secret"`
-	RedirectURIs string        `json:"redirect_uris"`
-	GrantTypes   string        `json:"grant_types"`
-	CustomDomain database.Null `json:"custom_domain"`
-	Roles        []string      `json:"roles"`
+	ProjectID    string   `json:"project_id"`
+	Name         string   `json:"name"`
+	ClientID     string   `json:"client_id"`
+	ClientSecret string   `json:"client_secret"`
+	RedirectURIs string   `json:"redirect_uris"`
+	GrantTypes   string   `json:"grant_types"`
+	CustomDomain string   `json:"custom_domain"`
+	Roles        []string `json:"roles"`
 }
 
 func (c Client) ToDomain() domain.Client {
@@ -24,6 +24,6 @@ func (c Client) ToDomain() domain.Client {
 		domain.WithClientSecret(c.ClientSecret),
 		domain.WithRedirectURIs(c.RedirectURIs),
 		domain.WithGrantTypes(c.GrantTypes),
-		domain.WithCustomDomain(c.CustomDomain),
+		domain.WithCustomDomain(database.ParseNull(c.CustomDomain)),
 	)
 }

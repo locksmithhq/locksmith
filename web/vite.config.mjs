@@ -45,6 +45,7 @@ export default defineConfig({
       clientPort: 4000,
     },
     host: '0.0.0.0',
+    allowedHosts: ['auth.example.local'],
     watch: {
       usePolling: true,
     },

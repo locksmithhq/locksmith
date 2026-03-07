@@ -12,40 +12,36 @@ import ACL from '@/module/acl/view/acl.vue'
 import i18n from '@/plugins/i18n'
 import { axiosInstance } from '@/plugins/axios'
 
-const getCustomDomainClientId = () => {
+let _cachedClientId = null
+let _resolved = false
+
+const resolveCustomDomain = async () => {
+  if (_resolved) return _cachedClientId
   const hostname = window.location.hostname
-  if (
-    hostname === 'localhost' ||
-    hostname === '127.0.0.1' ||
-    hostname.includes('github.dev') ||
-    hostname.includes('gitpod.io')
-  )
+  const skip = ['localhost', '127.0.0.1']
+  const skipIncludes = ['github.dev', 'gitpod.io']
+  if (skip.includes(hostname) || skipIncludes.some((s) => hostname.includes(s))) {
+    _resolved = true
     return null
-  // Simulation: find client by domain in localStorage
-  for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i)
-    if (key.startsWith('custom_domain_')) {
-      const savedDomain = localStorage.getItem(key)
-      if (savedDomain === hostname) {
-        return key.replace('custom_domain_', '')
-      }
-    }
   }
-  return null
+  try {
+    const { data } = await axiosInstance.get('/oauth2/resolve-domain', { params: { hostname } })
+    _cachedClientId = data.client_id || null
+  } catch {
+    _cachedClientId = null
+  }
+  _resolved = true
+  return _cachedClientId
 }
 
 const routes = [
   {
     path: '/',
-    component: () => (getCustomDomainClientId() ? Auth : RouterView),
-    beforeEnter: (to, from, next) => {
-      const clientId = getCustomDomainClientId()
+    component: RouterView,
+    beforeEnter: async (to, from, next) => {
+      const clientId = await resolveCustomDomain()
       if (clientId) {
-        to.query.client_id = clientId
-        // Fallback locale if missing
-        if (!to.params.locale)
-          to.params.locale = i18n.global.locale.value || 'en'
-        return next()
+        return next({ name: 'auth', params: { locale: i18n.global.locale.value || 'en' }, query: { client_id: clientId } })
       }
       return next('/en')
     },
@@ -65,7 +61,7 @@ const routes = [
         i18n.global.locale.value = locale
       }
 
-      const clientId = getCustomDomainClientId()
+      const clientId = _cachedClientId
       if (clientId && !to.query.client_id) {
         to.query.client_id = clientId
       }

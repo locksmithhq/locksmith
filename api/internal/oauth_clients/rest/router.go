@@ -7,6 +7,8 @@ import (
 )
 
 func InitializeOauthClientsRouter(router chi.Router) {
+	router.Get("/oauth2/resolve-domain", di.NewResolveCustomDomainHandler().Execute)
+
 	router.Group(func(r chi.Router) {
 		r.Use(locksmith.AuthMiddlewareCookie("LOCKSMITHACCESSTOKEN"))
 		r.With(locksmith.AclMiddleware("domain:locksmith", "module:oauth_clients", "action:read:all")).Get("/projects/{project_id}/clients", di.NewFetchClientsByProjectIDHandler().Execute)

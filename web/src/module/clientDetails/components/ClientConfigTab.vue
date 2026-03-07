@@ -41,7 +41,7 @@
 
         <v-col cols="12" md="6">
           <v-text-field
-            v-model="controller.customDomain"
+            v-model="controller.client.custom_domain"
             :label="$t('clientDetails.customDomain')"
             placeholder="auth.example.com"
             variant="outlined"
