@@ -14,8 +14,9 @@ type updateUserSessionActivityRepository struct {
 }
 
 func (r *updateUserSessionActivityRepository) Execute(ctx context.Context, sessionID string) error {
-	query := `UPDATE user_sessions SET last_activity = $1 WHERE id = $2`
-	_, err := r.database.ExecContext(ctx, query, time.Now().Format(time.RFC3339), sessionID)
+	now := time.Now()
+	query := `UPDATE user_sessions SET last_activity = $1, expires_at = $2 WHERE id = $3`
+	_, err := r.database.ExecContext(ctx, query, now.Format(time.RFC3339), now.Add(24*time.Hour).Format(time.RFC3339), sessionID)
 	if err != nil {
 		return stackerror.NewRepositoryError("UpdateUserSessionActivityRepository", err)
 	}
