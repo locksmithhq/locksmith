@@ -1,0 +1,16 @@
+default_project:
+  name: Default Project
+  description: Default project for Locksmith
+  domain: domain:locksmith
+
+# WARNING: Change these credentials immediately after the first run in production.
+default_account:
+  name: Default Account
+  email: admin@locksmith.rs
+  password: admin
+  username: admin
+
+default_client:
+  name: Default Client
+  redirect_uris: ${LOCKSMITH_BASE_URL}/api/locksmith/callback ${LOCKSMITH_BASE_URL}
+  grant_types: authorization_code
