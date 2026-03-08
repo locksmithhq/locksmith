@@ -76,22 +76,23 @@ const routes = [
         path: '',
         component: Skeleton,
         beforeEnter: async (to, _, next) => {
-          try {
-            await axiosInstance.get('/locksmith/status', {
-              withCredentials: true,
-            })
-          } catch (error) {
-            const locale = to.params.locale
-            const supportedLocales = ['en', 'pt-br']
-
-            if (!supportedLocales.includes(locale)) {
-              return next('en/login')
-            }
-
-            if (i18n.global.locale.value !== locale) {
-              i18n.global.locale.value = locale
-            }
+          const locale = to.params.locale
+          const supportedLocales = ['en', 'pt-br']
+          const redirectToLogin = () => {
+            if (!supportedLocales.includes(locale)) return next('en/login')
+            if (i18n.global.locale.value !== locale) i18n.global.locale.value = locale
             return next(locale + '/login')
+          }
+
+          try {
+            await axiosInstance.get('/locksmith/status', { withCredentials: true })
+          } catch (statusError) {
+            if (statusError.response?.status !== 401) return redirectToLogin()
+            try {
+              await axiosInstance.post('/locksmith/r', null, { withCredentials: true })
+            } catch {
+              return redirectToLogin()
+            }
           }
           return next()
         },
