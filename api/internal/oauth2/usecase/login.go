@@ -130,8 +130,13 @@ func (u *loginUseCase) Execute(ctx context.Context, in input.Login) (output.Logi
 		)
 	}
 
+	redirectTo := fmt.Sprintf("%s?code=%s&state=%s", in.RedirectURI, authCode.Code, in.State)
+	if in.DeviceID != "" {
+		redirectTo += "&device_id=" + in.DeviceID
+	}
+
 	return output.Login{
-		RedirectTo: fmt.Sprintf("%s?code=%s&state=%s", in.RedirectURI, authCode.Code, in.State),
+		RedirectTo: redirectTo,
 	}, nil
 }
 

@@ -8,4 +8,5 @@ type Login struct {
 	State               string `json:"state"`
 	CodeChallenge       string `json:"code_challenge"`
 	CodeChallengeMethod string `json:"code_challenge_method"`
+	DeviceID            string `json:"device_id"`
 }

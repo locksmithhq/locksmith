@@ -34,6 +34,7 @@ func (r *createLoginByClientIDRepository) Execute(ctx context.Context, login dom
 			logo_url
 		)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
+		ON CONFLICT (client_id) DO NOTHING
 	`
 
 	_, err := r.database.ExecContext(

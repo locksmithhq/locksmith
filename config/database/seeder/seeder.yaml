@@ -14,3 +14,66 @@ default_client:
   name: Default Client
   redirect_uris: ${LOCKSMITH_BASE_URL}/api/locksmith/callback ${LOCKSMITH_BASE_URL}
   grant_types: authorization_code
+
+projects:
+  - name: My Application
+    description: Main application for ACME Corp
+    domain: domain:myapp
+
+    roles:
+      - title: role:admin
+        policies:
+          - module: module:accounts
+            actions:
+              - action:create:one
+              - action:read:all
+              - action:update:one
+              - action:delete:one
+          - module: module:sessions
+            actions:
+              - action:read:all
+              - action:revoke
+          - module: module:oauth_clients
+            actions:
+              - action:read:all
+              - action:read:one
+              - action:create:one
+              - action:update:one
+
+      - title: role:user
+        policies:
+          - module: module:accounts
+            actions:
+              - action:read:own
+              - action:update:own
+
+    clients:
+      - name: My App Web Client
+        client_id: f1335eae-9670-42a4-8d12-e236884f4000
+        client_secret: cdca238e-966b-4d5c-81b6-5be8df60c35a
+        redirect_uris: http://localhost:3000/callback http://localhost:3000
+        grant_types: authorization_code
+        login:
+          layout: default
+          input_variant: outlined
+          show_sign_up: false
+          show_forgot_password: false
+          show_remember_me: false
+          show_social: false
+          enabled: true
+          primary_color: "#1976D2"
+          background_type: color
+          background_color: "#ffffff"
+          logo_url: ""
+
+    users:
+      - name: App Admin
+        email: admin@myapp.com
+        username: admin
+        password: changeme123
+        role: role:admin
+      - name: Regular User
+        email: user@myapp.com
+        username: user
+        password: changeme123
+        role: role:user

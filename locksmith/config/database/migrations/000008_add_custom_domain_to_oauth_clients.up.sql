@@ -1,1 +1,0 @@
-ALTER TABLE oauth_clients ADD COLUMN custom_domain VARCHAR(50);

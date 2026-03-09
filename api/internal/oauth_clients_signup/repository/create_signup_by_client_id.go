@@ -32,6 +32,7 @@ func (r *createSignupByClientIDRepository) Execute(ctx context.Context, signup d
 			default_role_name
 		)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+		ON CONFLICT (client_id) DO NOTHING
 	`
 
 	_, err := r.database.ExecContext(

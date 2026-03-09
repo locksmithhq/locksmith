@@ -12,7 +12,8 @@ import (
 )
 
 type configDefaultAccountCMD struct {
-	createAccountUseCase contract.CreateAccountUseCase
+	createAccountUseCase                    contract.CreateAccountUseCase
+	getAccountByEmailAndProjectIDRepository contract.GetAccountByEmailAndProjectIDRepository
 }
 
 func (c *configDefaultAccountCMD) Execute(ctx context.Context, projectID string) error {
@@ -35,6 +36,11 @@ func (c *configDefaultAccountCMD) Execute(ctx context.Context, projectID string)
 		return fmt.Errorf("failed to unmarshal seeder config from %s: %w", filePath, err)
 	}
 
+	// Idempotent: skip creation if account already exists
+	if _, err := c.getAccountByEmailAndProjectIDRepository.Execute(ctx, seederConfig.DefaultAccount.Email, projectID); err == nil {
+		return nil
+	}
+
 	in := input.Account{
 		Name:      seederConfig.DefaultAccount.Name,
 		Email:     seederConfig.DefaultAccount.Email,
@@ -52,6 +58,12 @@ func (c *configDefaultAccountCMD) Execute(ctx context.Context, projectID string)
 	return nil
 }
 
-func NewConfigDefaultAccount(createAccountUseCase contract.CreateAccountUseCase) contract.ConfigDefaultAccountCMD {
-	return &configDefaultAccountCMD{createAccountUseCase: createAccountUseCase}
+func NewConfigDefaultAccount(
+	createAccountUseCase contract.CreateAccountUseCase,
+	getAccountByEmailAndProjectIDRepository contract.GetAccountByEmailAndProjectIDRepository,
+) contract.ConfigDefaultAccountCMD {
+	return &configDefaultAccountCMD{
+		createAccountUseCase:                    createAccountUseCase,
+		getAccountByEmailAndProjectIDRepository: getAccountByEmailAndProjectIDRepository,
+	}
 }
