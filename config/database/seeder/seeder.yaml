@@ -15,142 +15,65 @@ default_client:
   redirect_uris: ${LOCKSMITH_BASE_URL}/api/locksmith/callback ${LOCKSMITH_BASE_URL}
   grant_types: authorization_code
 
-# ---------------------------------------------------------------------------
-# Additional projects to seed on startup.
-# All operations are idempotent — existing resources are never duplicated.
-# Supports ${ENV_VAR} expansion throughout the file.
-#
-# Structure:
-#
-# projects:
-#   - name: <string>           (required) unique project name
-#     description: <string>
-#     domain: <string>         Casbin domain (e.g. "domain:myapp")
-#
-#     roles:
-#       - title: <string>      role name (e.g. "role:admin")
-#         policies:            optional ACL policies for this role in this project
-#           - module: <string> module name (e.g. "module:accounts")
-#             actions:         list of actions granted
-#               - <string>     (e.g. "action:read:all")
-#
-#     clients:
-#       - name: <string>
-#         client_id: <string>         optional — auto-generated UUID if empty
-#         client_secret: <string>     optional — auto-generated UUID if empty
-#         redirect_uris: <string>     space-separated
-#         grant_types: <string>       space-separated (e.g. "authorization_code")
-#         login:
-#           layout: <string>
-#           input_variant: <string>   "outlined" | "filled" | etc.
-#           show_sign_up: <bool>
-#           show_forgot_password: <bool>
-#           show_remember_me: <bool>
-#           show_social: <bool>
-#           enabled: <bool>
-#           primary_color: <string>   hex color
-#           background_type: <string> "color" | "image"
-#           background_color: <string>
-#           background_image: <string>
-#           logo_url: <string>
-#           use_custom_html: <bool>
-#           custom_html: <string>
-#           custom_css: <string>
-#         signup:
-#           layout: <string>
-#           input_variant: <string>
-#           show_social: <bool>
-#           enabled: <bool>
-#           default_role_name: <string>  role auto-assigned on self-registration
-#           primary_color: <string>
-#           background_type: <string>
-#           background_color: <string>
-#           background_image: <string>
-#           logo_url: <string>
-#           use_custom_html: <bool>
-#           custom_html: <string>
-#           custom_css: <string>
-#
-#     users:
-#       - name: <string>
-#         email: <string>
-#         username: <string>
-#         password: <string>
-#         role: <string>        role name to assign
-#
-# Example (uncomment and adapt):
-#
-# projects:
-#   - name: My Application
-#     description: Main application for ACME Corp
-#     domain: domain:myapp
-#
-#     roles:
-#       - title: role:admin
-#         policies:
-#           - module: module:accounts
-#             actions:
-#               - action:create:one
-#               - action:read:all
-#               - action:update:one
-#               - action:delete:one
-#           - module: module:sessions
-#             actions:
-#               - action:read:all
-#               - action:revoke
-#           - module: module:oauth_clients
-#             actions:
-#               - action:read:all
-#               - action:read:one
-#               - action:create:one
-#               - action:update:one
-#
-#       - title: role:user
-#         policies:
-#           - module: module:accounts
-#             actions:
-#               - action:read:own
-#               - action:update:own
-#
-#     clients:
-#       - name: My App Web Client
-#         client_id: ${MY_APP_CLIENT_ID}
-#         client_secret: ${MY_APP_CLIENT_SECRET}
-#         redirect_uris: ${MY_APP_BASE_URL}/callback ${MY_APP_BASE_URL}
-#         grant_types: authorization_code
-#         login:
-#           layout: default
-#           input_variant: outlined
-#           show_sign_up: true
-#           show_forgot_password: true
-#           show_remember_me: true
-#           show_social: false
-#           enabled: true
-#           primary_color: "#1976D2"
-#           background_type: color
-#           background_color: "#ffffff"
-#           logo_url: ""
-#         signup:
-#           layout: default
-#           input_variant: outlined
-#           show_social: false
-#           enabled: true
-#           default_role_name: role:user
-#           primary_color: "#1976D2"
-#           background_type: color
-#           background_color: "#ffffff"
-#           logo_url: ""
-#
-#     users:
-#       - name: App Admin
-#         email: admin@myapp.com
-#         username: admin
-#         password: changeme123
-#         role: role:admin
-#       - name: Regular User
-#         email: user@myapp.com
-#         username: user
-#         password: changeme123
-#         role: role:user
-# ---------------------------------------------------------------------------
-projects: []
+projects:
+  - name: My Application
+    description: Main application for ACME Corp
+    domain: domain:myapp
+
+    roles:
+      - title: role:admin
+        policies:
+          - module: module:accounts
+            actions:
+              - action:create:one
+              - action:read:all
+              - action:update:one
+              - action:delete:one
+          - module: module:sessions
+            actions:
+              - action:read:all
+              - action:revoke
+          - module: module:oauth_clients
+            actions:
+              - action:read:all
+              - action:read:one
+              - action:create:one
+              - action:update:one
+
+      - title: role:user
+        policies:
+          - module: module:accounts
+            actions:
+              - action:read:own
+              - action:update:own
+
+    clients:
+      - name: My App Web Client
+        client_id: f1335eae-9670-42a4-8d12-e236884f4000
+        client_secret: cdca238e-966b-4d5c-81b6-5be8df60c35a
+        redirect_uris: http://localhost:3000/callback http://localhost:3000
+        grant_types: authorization_code
+        login:
+          layout: default
+          input_variant: outlined
+          show_sign_up: false
+          show_forgot_password: false
+          show_remember_me: false
+          show_social: false
+          enabled: true
+          primary_color: "#1976D2"
+          background_type: color
+          background_color: "#ffffff"
+          logo_url: ""
+
+    users:
+      - name: App Admin
+        email: admin@myapp.com
+        username: admin
+        password: changeme123
+        role: role:admin
+      - name: Regular User
+        email: user@myapp.com
+        username: user
+        password: changeme123
+        role: role:user
