@@ -285,12 +285,8 @@ func seedProjects(ctx context.Context) {
 				continue
 			}
 
-			// Use returned ClientID on first run; fall back to YAML value on subsequent runs
-			// (use case returns empty output when client already exists).
-			clientID := client.ClientID
-			if clientID == "" {
-				clientID = c.ClientID
-			}
+			// Use the primary key ID (oauth_clients.id) as FK for login/signup tables.
+			clientID := client.ID
 
 			if c.Login != nil {
 				if err := createLoginUseCase.Execute(ctx, clientID, loginInput.Login{
