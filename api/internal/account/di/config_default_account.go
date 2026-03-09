@@ -10,17 +10,13 @@ import (
 )
 
 func NewConfigDefaultAccountCMD() contract.ConfigDefaultAccountCMD {
+	conn := database.GetConnection()
 	return cmd.NewConfigDefaultAccount(
 		usecase.NewCreateAccountUseCase(
-			repository.NewCreateAccountRepository(
-				database.GetConnection(),
-			),
-			repository.NewGetAccountByEmailAndProjectIDRepository(
-				database.GetConnection(),
-			),
-			aclRepository.NewGetProjectDomainByProjectIDRepository(
-				database.GetConnection(),
-			),
+			repository.NewCreateAccountRepository(conn),
+			repository.NewGetAccountByEmailAndProjectIDRepository(conn),
+			aclRepository.NewGetProjectDomainByProjectIDRepository(conn),
 		),
+		repository.NewGetAccountByEmailAndProjectIDRepository(conn),
 	)
 }

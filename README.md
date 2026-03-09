@@ -13,6 +13,7 @@
   - [Docker Run](#docker-run)
 - [Configuration](#configuration)
 - [Default Credentials](#default-credentials)
+- [Seeder Configuration](#seeder-configuration)
 - [OAuth2 Flow](#oauth2-flow)
 - [API Reference](#api-reference)
 - [Access Control (ACL)](#access-control-acl)
@@ -135,7 +136,7 @@ http://localhost:4000
 
 ### Docker Compose with pgweb (database inspector)
 
-Useful for development — adds a web-based PostgreSQL UI on port 8081.
+Useful for development — adds a web-based PostgreSQL UI.
 
 ```yaml
 services:
@@ -370,6 +371,147 @@ default_client:
 
 > The `redirect_uris` field supports environment variable interpolation (`${VAR}`). The `client_id` and `client_secret` of the default client are always taken from `LOCKSMITH_APP_CLIENT_ID` and `LOCKSMITH_APP_CLIENT_SECRET` — they are not set in this file.
 
+### Seeding additional projects
+
+The `projects` key lets you declare additional projects — each with roles (including per-project ACL policies), OAuth clients (with login/signup screen config), and users — that are created automatically on startup.
+
+All entries are **idempotent**: existing resources are reused, never duplicated. All string values support `${ENV_VAR}` expansion.
+
+```yaml
+projects:
+  - name: My Application
+    description: Main application for ACME Corp
+    domain: domain:myapp
+
+    roles:
+      - title: role:admin
+        policies:
+          - module: module:accounts
+            actions:
+              - action:create:one
+              - action:read:all
+              - action:update:one
+              - action:delete:one
+          - module: module:sessions
+            actions:
+              - action:read:all
+              - action:revoke
+          - module: module:oauth_clients
+            actions:
+              - action:read:all
+              - action:read:one
+              - action:create:one
+              - action:update:one
+
+      - title: role:user
+        policies:
+          - module: module:accounts
+            actions:
+              - action:read:own
+              - action:update:own
+
+    clients:
+      - name: My App Web Client
+        client_id: ${MY_APP_CLIENT_ID}         # optional — auto-generated UUID if empty
+        client_secret: ${MY_APP_CLIENT_SECRET} # optional — auto-generated UUID if empty
+        redirect_uris: ${MY_APP_BASE_URL}/callback ${MY_APP_BASE_URL}
+        grant_types: authorization_code
+        login:
+          layout: default
+          input_variant: outlined
+          show_sign_up: true
+          show_forgot_password: true
+          show_remember_me: true
+          show_social: false
+          enabled: true
+          primary_color: "#1976D2"
+          background_type: color
+          background_color: "#ffffff"
+          logo_url: ""
+        signup:
+          layout: default
+          input_variant: outlined
+          show_social: false
+          enabled: true
+          default_role_name: role:user  # role auto-assigned on self-registration
+          primary_color: "#1976D2"
+          background_type: color
+          background_color: "#ffffff"
+          logo_url: ""
+
+    users:
+      - name: App Admin
+        email: admin@myapp.com
+        username: admin
+        password: changeme123
+        role: role:admin
+      - name: Regular User
+        email: user@myapp.com
+        username: user
+        password: changeme123
+        role: role:user
+```
+
+**Project fields:**
+
+| Field         | Required | Description                                               |
+| ------------- | -------- | --------------------------------------------------------- |
+| `name`        | yes      | Unique project name                                       |
+| `description` | no       | Human-readable description                                |
+| `domain`      | no       | Casbin domain identifier (e.g. `domain:myapp`)            |
+| `roles`       | no       | List of roles to create with optional ACL policies        |
+| `clients`     | no       | List of OAuth clients for this project                    |
+| `users`       | no       | List of accounts to create inside this project            |
+
+**Role fields:**
+
+| Field      | Required | Description                                                                      |
+| ---------- | -------- | -------------------------------------------------------------------------------- |
+| `title`    | yes      | Role name (e.g. `role:admin`). Global — shared across all projects.              |
+| `policies` | no       | ACL policies that grant this role access to modules/actions in this project only |
+
+**Policy fields:**
+
+| Field     | Required | Description                                                    |
+| --------- | -------- | -------------------------------------------------------------- |
+| `module`  | yes      | Module name (e.g. `module:accounts`). Global — auto-created.   |
+| `actions` | yes      | List of action names (e.g. `action:read:all`). Global — auto-created. |
+
+> Modules and actions declared inside `policies` are created globally (shared across all projects) and are immediately visible in the ACL dashboard. The policy assignment (role → module → action) is scoped to the project's Casbin domain.
+
+**Client fields:**
+
+| Field           | Required | Description                                                    |
+| --------------- | -------- | -------------------------------------------------------------- |
+| `name`          | yes      | Display name                                                   |
+| `client_id`     | no       | Fixed `client_id`; auto-generated UUID if omitted              |
+| `client_secret` | no       | Fixed secret; auto-generated UUID if omitted                   |
+| `redirect_uris` | yes      | Space-separated list of allowed redirect URIs                  |
+| `grant_types`   | yes      | Space-separated grant types (e.g. `authorization_code`)        |
+| `login`         | no       | Login screen configuration (see below)                         |
+| `signup`        | no       | Registration screen configuration (see below)                  |
+
+**Login/Signup fields:**
+
+| Field                | Type   | Description                                               |
+| -------------------- | ------ | --------------------------------------------------------- |
+| `layout`             | string | UI layout (`default`, etc.)                               |
+| `input_variant`      | string | Input style (`outlined`, `filled`, etc.)                  |
+| `enabled`            | bool   | Whether the screen is active                              |
+| `show_sign_up`       | bool   | Show link to registration (login only)                    |
+| `show_forgot_password` | bool | Show "forgot password" link (login only)                  |
+| `show_remember_me`   | bool   | Show "remember me" checkbox (login only)                  |
+| `show_social`        | bool   | Show social login/signup buttons                          |
+| `default_role_name`  | string | Role auto-assigned to new users on self-registration (signup only) |
+| `primary_color`      | string | Hex color for primary UI elements                         |
+| `background_type`    | string | `color` or `image`                                        |
+| `background_color`   | string | Hex background color                                      |
+| `background_image`   | string | URL of background image                                   |
+| `logo_url`           | string | URL of logo image                                         |
+| `use_custom_html`    | bool   | Use `custom_html` instead of default template             |
+| `custom_html`        | string | Raw HTML override                                         |
+| `custom_css`         | string | Extra CSS injected into the page                          |
+
 ### Mounting a custom seeder with Docker Compose
 
 ```yaml
@@ -398,7 +540,7 @@ docker run -d \
 
 ### Notes
 
-- The seeder runs **once on startup**. If the project, account, or client already exists (matched by name / email / client_id), the record is reused and not duplicated.
+- The seeder runs on **every startup**. All operations are idempotent — existing resources are reused, not duplicated.
 - The file must be present at `/etc/locksmith/config/seeder.yaml` — the process will exit with an error if it is missing.
 - After the first boot you can manage all resources through the dashboard or the API; the seeder file is no longer needed.
 
@@ -434,6 +576,21 @@ Content-Type: application/json
 
 {
   "email": "user@example.com",
+  "password": "password",
+  "client_id": "<client_id>"
+}
+```
+
+**2b. (Alternative) User registration:**
+
+```http
+POST /api/oauth2/register
+Content-Type: application/json
+
+{
+  "name": "User Name",
+  "email": "user@example.com",
+  "username": "username",
   "password": "password",
   "client_id": "<client_id>"
 }
@@ -483,7 +640,7 @@ Content-Type: application/json
 The management dashboard uses Locksmith's own callback handler which sets HTTP-only cookies instead of returning tokens in the response body:
 
 - `LOCKSMITHACCESSTOKEN` — JWT access token (5-minute expiry)
-- `LOCKSMITHREFRESHTOKEN` — UUID refresh token (30-day expiry)
+- `LOCKSMITHREFRESHTOKEN` — UUID refresh token (15-day cookie expiry)
 
 The cookie domain is derived automatically from the request's `Origin` header, supporting multi-domain deployments.
 
@@ -503,22 +660,25 @@ Routes with no marker are public.
 
 ### OAuth2
 
-| Method | Path                        | Description                                    |
-| ------ | --------------------------- | ---------------------------------------------- |
-| `POST` | `/api/oauth2/authorize`     | Start authorization — create auth code         |
-| `POST` | `/api/oauth2/login`         | Authenticate user credentials                  |
-| `POST` | `/api/oauth2/access-token`  | Exchange auth code for access + refresh tokens |
-| `POST` | `/api/oauth2/refresh-token` | Rotate refresh token and get new access token  |
+| Method | Path                          | Description                                    |
+| ------ | ----------------------------- | ---------------------------------------------- |
+| `POST` | `/api/oauth2/authorize`       | Start authorization — create auth code         |
+| `POST` | `/api/oauth2/login`           | Authenticate user credentials                  |
+| `POST` | `/api/oauth2/register`        | Register a new user account                    |
+| `POST` | `/api/oauth2/access-token`    | Exchange auth code for access + refresh tokens |
+| `POST` | `/api/oauth2/refresh-token`   | Rotate refresh token and get new access token  |
+| `GET`  | `/api/oauth2/resolve-domain`  | Resolve OAuth client by custom domain          |
 
 ---
 
 ### Locksmith Callback
 
-| Method | Path                      | Description                                   |
-| ------ | ------------------------- | --------------------------------------------- |
-| `GET`  | `/api/locksmith/callback` | OAuth callback — exchanges code, sets cookies |
-| `GET`  | `/api/locksmith/status`   | Check if current session is authenticated     |
-| `POST` | `/api/locksmith/r`        | Refresh access token using cookie             |
+| Method | Path                      | Description                                    |
+| ------ | ------------------------- | ---------------------------------------------- |
+| `GET`  | `/api/locksmith/callback` | OAuth callback — exchanges code, sets cookies  |
+| `GET`  | `/api/locksmith/status`   | Check if current session is authenticated      |
+| `POST` | `/api/locksmith/r`        | Refresh access token using cookie              |
+| `POST` | `/api/locksmith/logout`   | Clear authentication cookies and end session   |
 
 ---
 
@@ -536,16 +696,17 @@ Routes with no marker are public.
 
 ### Accounts
 
-| Method | Path                                             | Auth   | Description                            |
-| ------ | ------------------------------------------------ | ------ | -------------------------------------- |
-| `POST` | `/api/projects/:project_id/accounts`             | 🔒     | Create account (dashboard)             |
-| `PUT`  | `/api/projects/:project_id/accounts/:account_id` | 🔒     | Update account (dashboard)             |
-| `GET`  | `/api/projects/:project_id/accounts`             | 🔒     | List accounts with pagination          |
-| `GET`  | `/api/projects/:project_id/accounts/count`       | 🔒     | Count accounts matching filters        |
-| `POST` | `/api/accounts`                                  | 🔑     | Create account (client credentials)    |
-| `GET`  | `/api/accounts/:id`                              | 🔑     | Get account by ID (client credentials) |
-| `PUT`  | `/api/accounts/:account_id`                      | 🔑     | Update account (client credentials)    |
-| `POST` | `/api/accounts/change-password`                  | public | Change password                        |
+| Method | Path                                                   | Auth   | Description                            |
+| ------ | ------------------------------------------------------ | ------ | -------------------------------------- |
+| `POST` | `/api/projects/:project_id/accounts`                   | 🔒     | Create account (dashboard)             |
+| `PUT`  | `/api/projects/:project_id/accounts/:account_id`       | 🔒     | Update account (dashboard)             |
+| `GET`  | `/api/projects/:project_id/accounts`                   | 🔒     | List accounts with pagination          |
+| `GET`  | `/api/projects/:project_id/accounts/count`             | 🔒     | Count accounts matching filters        |
+| `GET`  | `/api/projects/:project_id/accounts/:id`               | 🔒     | Get a single account                   |
+| `POST` | `/api/accounts`                                        | 🔑     | Create account (client credentials)    |
+| `GET`  | `/api/accounts/:id`                                    | 🔑     | Get account by ID (client credentials) |
+| `PUT`  | `/api/accounts/:account_id`                            | 🔑     | Update account (client credentials)    |
+| `POST` | `/api/accounts/change-password`                        | public | Change password (JWT verified inline)  |
 
 **Pagination query parameters** (for list endpoints):
 
@@ -572,7 +733,7 @@ Routes with no marker are public.
 {
   "name": "My Application",
   "redirect_uris": "https://myapp.com/callback",
-  "grant_types": "authorization_code refresh_token"
+  "grant_types": "authorization_code"
 }
 ```
 
@@ -580,20 +741,38 @@ Routes with no marker are public.
 
 ### Login Page Configuration 🔒
 
-| Method | Path                                          | Description              |
-| ------ | --------------------------------------------- | ------------------------ |
-| `GET`  | `/api/projects/:project_id/clients/:id/login` | Get login page config    |
-| `POST` | `/api/projects/:project_id/clients/:id/login` | Create login page config |
-| `PUT`  | `/api/projects/:project_id/clients/:id/login` | Update login page config |
+| Method | Path                                           | Description              |
+| ------ | ---------------------------------------------- | ------------------------ |
+| `GET`  | `/api/projects/:project_id/clients/:id/login`  | Get login page config    |
+| `POST` | `/api/projects/:project_id/clients/:id/login`  | Create login page config |
+| `PUT`  | `/api/projects/:project_id/clients/:id/login`  | Update login page config |
 
 ---
 
-### Sessions 🔒
+### Signup Page Configuration 🔒
 
-| Method | Path                                       | Description               |
-| ------ | ------------------------------------------ | ------------------------- |
-| `GET`  | `/api/projects/:project_id/sessions`       | List sessions (paginated) |
-| `GET`  | `/api/projects/:project_id/sessions/count` | Count sessions            |
+| Method | Path                                           | Description               |
+| ------ | ---------------------------------------------- | ------------------------- |
+| `GET`  | `/api/projects/:project_id/clients/:id/signup` | Get signup page config    |
+| `POST` | `/api/projects/:project_id/clients/:id/signup` | Create signup page config |
+| `PUT`  | `/api/projects/:project_id/clients/:id/signup` | Update signup page config |
+
+---
+
+### Sessions
+
+| Method   | Path                                                              | Auth | Description                                  |
+| -------- | ----------------------------------------------------------------- | ---- | -------------------------------------------- |
+| `GET`    | `/api/projects/:project_id/sessions`                              | 🔒   | List sessions for a project (paginated)      |
+| `GET`    | `/api/projects/:project_id/sessions/count`                        | 🔒   | Count sessions for a project                 |
+| `GET`    | `/api/projects/:project_id/accounts/:account_id/sessions`         | 🔒   | List sessions for a specific account         |
+| `GET`    | `/api/projects/:project_id/accounts/:account_id/sessions/count`   | 🔒   | Count sessions for a specific account        |
+| `DELETE` | `/api/projects/:project_id/sessions/:session_id`                  | 🔒   | Revoke a session                             |
+| `GET`    | `/api/projects/:project_id/accounts/:account_id/refresh-tokens`   | 🔒   | List refresh tokens for an account           |
+| `GET`    | `/api/projects/:project_id/accounts/:account_id/refresh-tokens/count` | 🔒 | Count refresh tokens for an account        |
+| `GET`    | `/api/accounts/:account_id/sessions`                              | 🔑   | List sessions for an account (client auth)   |
+| `GET`    | `/api/accounts/:account_id/sessions/count`                        | 🔑   | Count sessions for an account (client auth)  |
+| `DELETE` | `/api/accounts/:account_id/sessions/:session_id`                  | 🔑   | Revoke a session (client auth)               |
 
 **Session query parameters:**
 
@@ -602,6 +781,14 @@ Routes with no marker are public.
 | `page`    | Page number                             | `?page=1`        |
 | `limit`   | Items per page (max 100)                | `?limit=20`      |
 | `search`  | Search by user name, email, IP, browser | `?search=chrome` |
+
+---
+
+### Dashboard 🔒
+
+| Method | Path                   | Description                                          |
+| ------ | ---------------------- | ---------------------------------------------------- |
+| `GET`  | `/api/dashboard/stats` | Aggregated statistics (projects, accounts, sessions) |
 
 ---
 
@@ -619,7 +806,7 @@ Routes with no marker are public.
 | `GET`  | `/api/acl/projects/:projectId`                   | Get ACL policies for a project                          |
 | `POST` | `/api/acl/projects/:projectId`                   | Assign role+module+action to a project                  |
 | `POST` | `/api/acl/enforce`                               | Check if a subject has permission                       |
-| `GET`  | `/api/acl/permissions/user/:user/domain/:domain` | 🔑 Get user permissions                                 |
+| `GET`  | `/api/acl/permissions/user/:user/domain/:domain` | 🔑 Get user permissions in a domain                    |
 
 **Enforce request body:**
 
@@ -733,7 +920,7 @@ Sessions are visible in the dashboard under **Project Details → Logs**.
 ### Token security
 
 - **Access tokens**: JWT, signed, 5-minute expiry
-- **Refresh tokens**: UUID v4, stored as SHA-256 hash in the database (never plaintext), 30-day expiry
+- **Refresh tokens**: UUID v4, stored as SHA-256 hash in the database (never plaintext), 15-day cookie expiry
 - **Rotation**: each refresh generates a new token and invalidates the previous one; the parent chain is maintained for audit
 - **Revocation**: sessions can be revoked per-session via the `revoked` flag; the reason is recorded
 
@@ -745,13 +932,13 @@ The web dashboard is served at the root path (`/`) and provides a full UI for ma
 
 ### Main sections
 
-| Section              | Path                        | Description                                        |
-| -------------------- | --------------------------- | -------------------------------------------------- |
-| Dashboard            | `/`                         | Overview                                           |
-| Projects             | `/projects`                 | Create and manage projects                         |
-| Project Details      | `/projects/:id`             | Tabs for Config, Roles, OAuth Clients, Users, Logs |
-| OAuth Client Details | `/projects/:id/clients/:id` | Config, Login page, Register page                  |
-| ACL                  | `/acl`                      | Manage global roles, modules, and actions          |
+| Section              | Path                        | Description                                                  |
+| -------------------- | --------------------------- | ------------------------------------------------------------ |
+| Dashboard            | `/`                         | Overview with aggregated statistics                          |
+| Projects             | `/projects`                 | Create and manage projects                                   |
+| Project Details      | `/projects/:id`             | Tabs for Config, Roles, OAuth Clients, Users, Logs           |
+| OAuth Client Details | `/projects/:id/clients/:id` | Config, Login page, Signup page                              |
+| ACL                  | `/acl`                      | Manage global roles, modules, and actions                    |
 
 ### Project Details tabs
 
@@ -795,31 +982,36 @@ docker compose up --build -d
 **4. Open the dashboard:**
 
 ```
-http://localhost:4000
+http://localhost:${LOCKSMITH_APP_PORT}
 ```
+
+The default value of `LOCKSMITH_APP_PORT` in `.env.example` is `4000`, so the dashboard is at `http://localhost:4000` unless you change it.
 
 **Available make commands:**
 
-| Command          | Description                             |
-| ---------------- | --------------------------------------- |
-| `make up`        | Start all services (builds if needed)   |
-| `make down`      | Stop all services                       |
-| `make restart`   | Stop and restart all services           |
-| `make rebuild`   | Stop, rebuild images, and restart       |
-| `make logs`      | Tail logs for all services              |
-| `make logs-api`  | Tail API logs only                      |
-| `make logs-web`  | Tail frontend logs only                 |
-| `make logs-db`   | Tail database logs only                 |
-| `make shell-api` | Open shell inside the API container     |
-| `make shell-db`  | Open psql inside the database container |
-| `make clean`     | Stop services and remove all volumes    |
-| `make status`    | Show container status                   |
+| Command           | Description                             |
+| ----------------- | --------------------------------------- |
+| `make up`         | Start all services (builds if needed)   |
+| `make down`       | Stop all services                       |
+| `make restart`    | Stop and restart all services           |
+| `make rebuild`    | Stop, rebuild images, and restart       |
+| `make logs`       | Tail logs for all services              |
+| `make logs-api`   | Tail API logs only                      |
+| `make logs-web`   | Tail frontend logs only                 |
+| `make logs-db`    | Tail database logs only                 |
+| `make shell-api`  | Open shell inside the API container     |
+| `make shell-db`   | Open psql inside the database container |
+| `make clean`      | Stop services and remove all volumes    |
+| `make status`     | Show container status                   |
+| `make open-web`   | Open dashboard in browser               |
+| `make open-pgweb` | Open pgweb (DB inspector) in browser    |
+| `make open-api`   | Open API directly in browser            |
 
 **Development services:**
 
-| Service         | URL                     | Description           |
-| --------------- | ----------------------- | --------------------- |
-| Dashboard + API | `http://localhost:4000` | Proxied through nginx |
-| pgweb           | `http://localhost:8081` | PostgreSQL web UI     |
+| Service         | Description                             |
+| --------------- | --------------------------------------- |
+| Dashboard + API | Proxied through nginx at `LOCKSMITH_APP_PORT` |
+| pgweb           | PostgreSQL web UI (configure port in compose.yaml) |
 
 The development setup uses **Air** for Go hot reload and **Bun** with Vite HMR for the frontend. Changes to Go or Vue files are reflected without restarting containers.

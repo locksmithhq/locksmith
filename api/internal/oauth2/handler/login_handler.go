@@ -21,6 +21,13 @@ func (h *loginHandler) Execute(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Read device_id from cookie so it survives cross-domain OAuth redirects
+	if req.DeviceID == "" {
+		if cookie, err := r.Cookie("device_id"); err == nil {
+			req.DeviceID = cookie.Value
+		}
+	}
+
 	login, err := h.loginUseCase.Execute(r.Context(), req)
 	if err != nil {
 		stackerror.HttpResponse(w, "LoginHandler", err)

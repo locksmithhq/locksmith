@@ -3,6 +3,7 @@ package config
 import (
 	"context"
 	"errors"
+	"fmt"
 	"os"
 
 	diAccount "github.com/locksmithhq/locksmith/api/internal/account/di"
@@ -11,19 +12,28 @@ import (
 	diProject "github.com/locksmithhq/locksmith/api/internal/project/di"
 )
 
-func InitializeSeeder(ctx context.Context) {
-	var useCaseError stackerror.UseCaseError
-	project, err := diProject.NewConfigDefaultProjectCMD().Execute(ctx)
-	if errors.As(err, &useCaseError) {
-		useCaseError.StdoutResponse("CONFIG: InitializeSeeder")
-		os.Exit(1)
+func exitOnSeedError(label string, err error) {
+	if err == nil {
+		return
 	}
+	var useCaseError stackerror.UseCaseError
+	if errors.As(err, &useCaseError) {
+		useCaseError.StdoutResponse(label)
+	} else {
+		fmt.Fprintln(os.Stderr, label+":", err)
+	}
+	os.Exit(1)
+}
+
+func InitializeSeeder(ctx context.Context) {
+	project, err := diProject.NewConfigDefaultProjectCMD().Execute(ctx)
+	exitOnSeedError("CONFIG: InitializeSeeder project", err)
 
 	_, err = diOAuthClients.NewConfigDefaultClientCMD().Execute(ctx, project.ID)
-	if errors.As(err, &useCaseError) {
-		useCaseError.StdoutResponse("CONFIG: InitializeSeeder")
-		os.Exit(1)
-	}
+	exitOnSeedError("CONFIG: InitializeSeeder client", err)
 
-	diAccount.NewConfigDefaultAccountCMD().Execute(ctx, project.ID)
+	err = diAccount.NewConfigDefaultAccountCMD().Execute(ctx, project.ID)
+	exitOnSeedError("CONFIG: InitializeSeeder account", err)
+
+	seedProjects(ctx)
 }

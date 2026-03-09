@@ -10,12 +10,16 @@ import (
 
 func NewGenerateRefreshTokenHandler() contract.GenerateRefreshTokenHandler {
 	return handler.NewGenerateRefreshTokenHandler(
-		usecase.NewGenerateRefreshTokenUseCase(
-			repository.NewGetRefreshTokenByHashRepository(database.GetConnection()),
-			repository.NewUpdateRefreshTokenRepository(database.GetConnection()),
-			repository.NewCreateRefreshTokenRepository(database.GetConnection()),
-			repository.NewGetClientByClientIDRepository(database.GetConnection()),
-			repository.NewGetClientByIDRepository(database.GetConnection()),
-		),
+		NewGenerateRefreshTokenUseCase(),
+	)
+}
+
+func NewGenerateRefreshTokenUseCase() contract.GenerateRefreshTokenUseCase {
+	return usecase.NewGenerateRefreshTokenUseCase(
+		repository.NewGetRefreshTokenByHashRepository(database.GetConnection()),
+		repository.NewUpdateRefreshTokenRepository(database.GetConnection()),
+		repository.NewCreateRefreshTokenRepository(database.GetConnection()),
+		repository.NewGetClientByClientIDRepository(database.GetConnection()),
+		repository.NewGetClientByIDRepository(database.GetConnection()),
 	)
 }

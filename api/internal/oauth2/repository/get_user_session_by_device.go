@@ -41,7 +41,8 @@ func (r *getUserSessionByDeviceRepository) Execute(ctx context.Context, accountI
 				last_activity, 
 				created_at 
 				FROM user_sessions 
-				WHERE account_id = $1 AND client_id = $2 AND device_id = $3 AND revoked = false AND expires_at > NOW()
+				WHERE account_id = $1 AND client_id = $2 AND device_id = $3 AND revoked = false
+				ORDER BY created_at DESC
 				LIMIT 1`
 
 	err := r.database.GetContext(ctx, &userSession, query, accountID, clientID, deviceID)

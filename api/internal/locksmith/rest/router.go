@@ -11,10 +11,14 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/locksmithhq/locksmith-go"
 	"github.com/locksmithhq/locksmith/api/internal/core/types/stackerror"
+	oauth2Di "github.com/locksmithhq/locksmith/api/internal/oauth2/di"
+	oauth2Input "github.com/locksmithhq/locksmith/api/internal/oauth2/types/input"
 )
 
 func InitializeLocksmithRouter(router chi.Router) {
 	redirectUrl := os.Getenv("LOCKSMITH_BASE_URL")
+	generateAccessTokenUseCase := oauth2Di.NewGenerateAccessTokenUseCase()
+	generateRefreshTokenUseCase := oauth2Di.NewGenerateRefreshTokenUseCase()
 
 	router.Get("/locksmith/callback", func(w http.ResponseWriter, r *http.Request) {
 		code := r.URL.Query().Get("code")
@@ -29,12 +33,33 @@ func InitializeLocksmithRouter(router chi.Router) {
 			codeVerifier = cv.Value
 		}
 
-		token, err := locksmith.GenerateAccessToken(r.Context(), r, locksmith.AccessTokenInput{
-			ClientID:     os.Getenv("LOCKSMITH_APP_CLIENT_ID"),
-			ClientSecret: os.Getenv("LOCKSMITH_APP_CLIENT_SECRET"),
-			GrantType:    "authorization_code",
-			Code:         code,
-			CodeVerifier: codeVerifier,
+		fp := locksmith.Parse(r)
+		// Prefer device_id from query param (survives cross-domain redirects),
+		// fall back to cookie for same-domain flows
+		deviceID := r.URL.Query().Get("device_id")
+		if deviceID == "" {
+			if cookie, err := r.Cookie("device_id"); err == nil {
+				deviceID = cookie.Value
+			}
+		}
+
+		token, err := generateAccessTokenUseCase.Execute(r.Context(), oauth2Input.AccessToken{
+			ClientID:        os.Getenv("LOCKSMITH_APP_CLIENT_ID"),
+			ClientSecret:    os.Getenv("LOCKSMITH_APP_CLIENT_SECRET"),
+			GrantType:       "authorization_code",
+			Code:            code,
+			CodeVerifier:    codeVerifier,
+			DeviceID:        deviceID,
+			IPAddress:       fp.IPAddress,
+			UserAgent:       fp.UserAgent,
+			DeviceType:      fp.DeviceType,
+			Browser:         fp.Browser,
+			BrowserVersion:  fp.BrowserVersion,
+			OS:              fp.OS,
+			OSVersion:       fp.OSVersion,
+			LocationCountry: fp.LocationCountry,
+			LocationRegion:  fp.LocationRegion,
+			LocationCity:    fp.LocationCity,
 		})
 
 		if err != nil {
@@ -122,9 +147,7 @@ func InitializeLocksmithRouter(router chi.Router) {
 			return
 		}
 
-		token, err := locksmith.GenerateRefreshToken(r.Context(), locksmith.RefreshAccessTokenInput{
-			RefreshToken: cookie.Value,
-		})
+		token, err := generateRefreshTokenUseCase.Execute(r.Context(), cookie.Value)
 		if err != nil {
 			domain := getDomainFromRequest(r)
 			http.SetCookie(w, &http.Cookie{

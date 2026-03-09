@@ -24,7 +24,7 @@ func (u *createClientUseCase) Execute(ctx context.Context, in input.Client) (out
 	}
 
 	if client.ID != "" {
-		return output.Client{}, nil
+		return output.NewClientFromDomain(client), nil
 	}
 
 	if in.ClientID == "" {

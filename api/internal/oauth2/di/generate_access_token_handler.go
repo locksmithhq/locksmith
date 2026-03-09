@@ -10,14 +10,18 @@ import (
 
 func NewGenerateAccessTokenHandler() contract.GenerateAccessTokenHandler {
 	return handler.NewGenerateAccessTokenHandler(
-		usecase.NewGenerateAccessTokenUseCase(
-			repository.NewGetAuthCodeByCodeRepository(database.GetConnection()),
-			repository.NewUpdateAuthCodeRepository(database.GetConnection()),
-			repository.NewGetClientByClientIDRepository(database.GetConnection()),
-			repository.NewCreateUserSessionRepository(database.GetConnection()),
-			repository.NewCreateRefreshTokenRepository(database.GetConnection()),
-			repository.NewGetUserSessionByDeviceRepository(database.GetConnection()),
-			repository.NewUpdateUserSessionActivityRepository(database.GetConnection()),
-		),
+		NewGenerateAccessTokenUseCase(),
+	)
+}
+
+func NewGenerateAccessTokenUseCase() contract.GenerateAccessTokenUseCase {
+	return usecase.NewGenerateAccessTokenUseCase(
+		repository.NewGetAuthCodeByCodeRepository(database.GetConnection()),
+		repository.NewUpdateAuthCodeRepository(database.GetConnection()),
+		repository.NewGetClientByClientIDRepository(database.GetConnection()),
+		repository.NewCreateUserSessionRepository(database.GetConnection()),
+		repository.NewCreateRefreshTokenRepository(database.GetConnection()),
+		repository.NewGetUserSessionByDeviceRepository(database.GetConnection()),
+		repository.NewUpdateUserSessionActivityRepository(database.GetConnection()),
 	)
 }
