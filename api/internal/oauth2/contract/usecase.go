@@ -35,3 +35,7 @@ type CheckTokenStatusUseCase interface {
 type RegisterUseCase interface {
 	Execute(context.Context, input.Register) (output.Login, error)
 }
+
+type GetPWAManifestUseCase interface {
+	Execute(ctx context.Context, clientID string, baseURL string) (output.Manifest, error)
+}

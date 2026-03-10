@@ -25,3 +25,11 @@ type GetClientByClientIDHandler interface {
 type RegisterHandler interface {
 	Execute(w http.ResponseWriter, r *http.Request)
 }
+
+type PWAManifestHandler interface {
+	Execute(w http.ResponseWriter, r *http.Request)
+}
+
+type FaviconHandler interface {
+	Execute(w http.ResponseWriter, r *http.Request)
+}

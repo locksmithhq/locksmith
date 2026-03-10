@@ -12,5 +12,7 @@ func InitializeOAuth2Router(router chi.Router) {
 		router.Post("/oauth2/register", di.NewRegisterHandler().Execute)
 		router.Post("/oauth2/access-token", di.NewGenerateAccessTokenHandler().Execute)
 		router.Post("/oauth2/refresh-token", di.NewGenerateRefreshTokenHandler().Execute)
+		router.Get("/oauth2/manifest", di.NewPWAManifestHandler().Execute)
+		router.Get("/oauth2/favicon", di.NewFaviconHandler().Execute)
 	})
 }
