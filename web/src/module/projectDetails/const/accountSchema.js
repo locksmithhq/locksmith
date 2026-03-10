@@ -23,49 +23,6 @@ const accountSchema = z
       }
     }
 
-    if (data.password && data.password.trim() !== '') {
-      const pwd = data.password
-
-      if (pwd.length < 8) {
-        ctx.addIssue({
-          code: 'custom',
-          message: 'Password must be at least 8 characters long',
-          path: ['password'],
-        })
-      }
-
-      if (!/[a-z]/.test(pwd)) {
-        ctx.addIssue({
-          code: 'custom',
-          message: 'Password must contain at least one lowercase letter',
-          path: ['password'],
-        })
-      }
-
-      if (!/[A-Z]/.test(pwd)) {
-        ctx.addIssue({
-          code: 'custom',
-          message: 'Password must contain at least one uppercase letter',
-          path: ['password'],
-        })
-      }
-
-      if (!/\d/.test(pwd)) {
-        ctx.addIssue({
-          code: 'custom',
-          message: 'Password must contain at least one number',
-          path: ['password'],
-        })
-      }
-
-      if (!/[@$!%*?&]/.test(pwd)) {
-        ctx.addIssue({
-          code: 'custom',
-          message: 'Password must contain at least one special character (@$!%*?&)',
-          path: ['password'],
-        })
-      }
-    }
   })
 
 export { accountSchema }

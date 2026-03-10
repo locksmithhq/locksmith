@@ -8,10 +8,6 @@ export const changePasswordUseCase =
         throw new Error('Passwords do not match')
       }
 
-      if (state.newPassword.length < 8) {
-        throw new Error('Password must be at least 8 characters')
-      }
-
       await changePasswordRepository({
         jwt: state.changePasswordJWT,
         password: state.newPassword,
