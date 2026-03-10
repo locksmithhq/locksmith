@@ -31,9 +31,10 @@ func (r *createLoginByClientIDRepository) Execute(ctx context.Context, login dom
 			background_image,
 			background_type,
 			primary_color,
-			logo_url
+			logo_url,
+			favicon_url
 		)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
 		ON CONFLICT (client_id) DO NOTHING
 	`
 
@@ -56,6 +57,7 @@ func (r *createLoginByClientIDRepository) Execute(ctx context.Context, login dom
 		login.BackgroundType,
 		login.PrimaryColor,
 		login.LogoURL,
+		login.FaviconURL,
 	)
 	if err != nil {
 		return err

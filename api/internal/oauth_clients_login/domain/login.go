@@ -20,6 +20,7 @@ type Login struct {
 	BackgroundType     database.Null `json:"background_type" db:"background_type" paginate:"background_type"`
 	PrimaryColor       database.Null `json:"primary_color" db:"primary_color" paginate:"primary_color"`
 	LogoURL            database.Null `json:"logo_url" db:"logo_url" paginate:"logo_url"`
+	FaviconURL         database.Null `json:"favicon_url" db:"favicon_url" paginate:"favicon_url"`
 	CreatedAt          string        `json:"created_at" db:"created_at" paginate:"created_at"`
 	UpdatedAt          string        `json:"updated_at" db:"updated_at" paginate:"updated_at"`
 }
@@ -139,6 +140,13 @@ func WithPrimaryColor(primaryColor string) func(*Login) error {
 func WithLogoURL(logoURL string) func(*Login) error {
 	return func(login *Login) error {
 		login.LogoURL = database.ParseNull(logoURL)
+		return nil
+	}
+}
+
+func WithFaviconURL(faviconURL string) func(*Login) error {
+	return func(login *Login) error {
+		login.FaviconURL = database.ParseNull(faviconURL)
 		return nil
 	}
 }

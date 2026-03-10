@@ -44,6 +44,7 @@ func NewClient(
 			BackgroundType:     login.BackgroundType,
 			PrimaryColor:       login.PrimaryColor,
 			LogoURL:            login.LogoURL,
+			FaviconURL:         login.FaviconURL,
 		}
 	}
 
@@ -63,6 +64,7 @@ func NewClient(
 			BackgroundType:  signup.BackgroundType,
 			PrimaryColor:    signup.PrimaryColor,
 			LogoURL:         signup.LogoURL,
+			FaviconURL:      signup.FaviconURL,
 			CreatedAt:       signup.CreatedAt,
 			UpdatedAt:       signup.UpdatedAt,
 		}

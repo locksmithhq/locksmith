@@ -22,4 +22,5 @@ type OAuthClientLogin struct {
 	BackgroundType     database.Null `json:"background_type" db:"background_type" paginate:"background_type"`
 	PrimaryColor       database.Null `json:"primary_color" db:"primary_color" paginate:"primary_color"`
 	LogoURL            database.Null `json:"logo_url" db:"logo_url" paginate:"logo_url"`
+	FaviconURL         database.Null `json:"favicon_url" db:"favicon_url" paginate:"favicon_url"`
 }

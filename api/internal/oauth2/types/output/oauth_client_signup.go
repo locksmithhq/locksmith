@@ -17,6 +17,7 @@ type OAuthClientSignup struct {
 	BackgroundType  database.Null `json:"background_type"`
 	PrimaryColor    database.Null `json:"primary_color"`
 	LogoURL         database.Null `json:"logo_url"`
+	FaviconURL      database.Null `json:"favicon_url"`
 	CreatedAt       string        `json:"created_at"`
 	UpdatedAt       string        `json:"updated_at"`
 }

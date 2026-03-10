@@ -18,6 +18,7 @@ type Login struct {
 	BackgroundType     string `json:"background_type"`
 	PrimaryColor       string `json:"primary_color"`
 	LogoURL            string `json:"logo_url"`
+	FaviconURL         string `json:"favicon_url"`
 }
 
 func (in Login) ToLoginDomain() domain.Login {
@@ -37,5 +38,6 @@ func (in Login) ToLoginDomain() domain.Login {
 		domain.WithBackgroundType(in.BackgroundType),
 		domain.WithPrimaryColor(in.PrimaryColor),
 		domain.WithLogoURL(in.LogoURL),
+		domain.WithFaviconURL(in.FaviconURL),
 	)
 }

@@ -20,7 +20,7 @@ func (r *getSignupByClientIDRepository) Execute(ctx context.Context, clientID st
 	query := `SELECT
 		id, client_id, custom_css, custom_html, input_variant, layout,
 		show_social, use_custom_html, enabled,
-		background_color, background_image, background_type, primary_color, logo_url,
+		background_color, background_image, background_type, primary_color, logo_url, favicon_url,
 		default_role_name, created_at, updated_at
 	FROM oauth_clients_signup
 	WHERE client_id = $1`

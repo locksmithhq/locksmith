@@ -29,9 +29,10 @@ func (r *createSignupByClientIDRepository) Execute(ctx context.Context, signup d
 			background_type,
 			primary_color,
 			logo_url,
+			favicon_url,
 			default_role_name
 		)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
 		ON CONFLICT (client_id) DO NOTHING
 	`
 
@@ -51,6 +52,7 @@ func (r *createSignupByClientIDRepository) Execute(ctx context.Context, signup d
 		signup.BackgroundType,
 		signup.PrimaryColor,
 		signup.LogoURL,
+		signup.FaviconURL,
 		signup.DefaultRoleName,
 	)
 	if err != nil {

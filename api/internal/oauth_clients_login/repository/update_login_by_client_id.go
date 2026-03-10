@@ -31,7 +31,8 @@ func (r *updateLoginByClientIDRepository) Execute(ctx context.Context, login dom
 			background_image = $13,
 			background_type = $14,
 			primary_color = $15,
-			logo_url = $16
+			logo_url = $16,
+		favicon_url = $17
 		WHERE client_id = $1
 	`
 
@@ -54,6 +55,7 @@ func (r *updateLoginByClientIDRepository) Execute(ctx context.Context, login dom
 		login.BackgroundType,
 		login.PrimaryColor,
 		login.LogoURL,
+		login.FaviconURL,
 	)
 	if err != nil {
 		return err
