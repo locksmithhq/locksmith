@@ -159,6 +159,70 @@
               </v-col>
 
               <v-col cols="12">
+                <v-label class="text-caption font-weight-bold text-grey-darken-1 mb-2"
+                  >Favicon</v-label
+                >
+                <input
+                  ref="faviconFileInput"
+                  type="file"
+                  accept="image/*"
+                  style="display: none"
+                  @change="handleFaviconUpload"
+                />
+                <div v-if="!controller.registerConfig.favicon_url">
+                  <v-btn
+                    color="secondary"
+                    variant="outlined"
+                    block
+                    height="48"
+                    @click="triggerFaviconUpload"
+                  >
+                    <v-icon start>mdi-upload</v-icon>
+                    Upload Favicon
+                  </v-btn>
+                  <div class="text-caption text-grey mt-1">
+                    Recomendado: PNG, JPG ou SVG — será salvo em 512x512px
+                  </div>
+                </div>
+                <div v-else>
+                  <v-card variant="outlined" rounded="lg" class="pa-3">
+                    <div class="d-flex align-center ga-3">
+                      <v-img
+                        :src="controller.registerConfig.favicon_url"
+                        max-height="32"
+                        max-width="32"
+                        contain
+                        class="border rounded"
+                      />
+                      <div class="flex-grow-1">
+                        <div class="text-caption text-grey mb-2">Favicon atual</div>
+                        <div class="d-flex ga-2">
+                          <v-btn
+                            size="small"
+                            color="secondary"
+                            variant="tonal"
+                            @click="triggerFaviconUpload"
+                          >
+                            <v-icon start size="16">mdi-upload</v-icon>
+                            Alterar
+                          </v-btn>
+                          <v-btn
+                            size="small"
+                            color="error"
+                            variant="text"
+                            @click="controller.registerConfig.favicon_url = ''"
+                          >
+                            <v-icon start size="16">mdi-delete</v-icon>
+                            Remover
+                          </v-btn>
+                        </div>
+                      </div>
+                    </div>
+                  </v-card>
+                </div>
+              </v-col>
+
+              <v-col cols="12">
                 <v-menu :close-on-content-click="false" location="bottom start">
                   <template v-slot:activator="{ props }">
                     <v-text-field
@@ -727,9 +791,44 @@ const previewMode = ref('desktop')
 const activePanels = ref([0, 1, 2])
 const currentOrigin = window.location.origin
 const logoFileInput = ref(null)
+const faviconFileInput = ref(null)
 
 const triggerLogoUpload = () => {
   logoFileInput.value?.click()
+}
+
+const triggerFaviconUpload = () => {
+  faviconFileInput.value?.click()
+}
+
+const handleFaviconUpload = (event) => {
+  const file = event.target.files?.[0]
+  if (!file) return
+
+  if (file.size > 5 * 1024 * 1024) {
+    alert('Favicon must be less than 5MB')
+    return
+  }
+
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    const result = e.target?.result
+    if (!result || typeof result !== 'string') return
+
+    const img = new Image()
+    img.onload = () => {
+      const canvas = document.createElement('canvas')
+      canvas.width = 512
+      canvas.height = 512
+      const ctx = canvas.getContext('2d')
+      ctx.drawImage(img, 0, 0, 512, 512)
+      props.controller.registerConfig.favicon_url = canvas.toDataURL('image/png')
+    }
+    img.src = result
+  }
+  reader.readAsDataURL(file)
+
+  event.target.value = ''
 }
 
 const handleLogoUpload = (event) => {
