@@ -23,7 +23,7 @@ func nullString(n database.Null) string {
 	return ""
 }
 
-func (u *getPWAManifestUseCase) Execute(ctx context.Context, clientID string, baseURL string) (output.Manifest, error) {
+func (u *getPWAManifestUseCase) Execute(ctx context.Context, clientID string) (output.Manifest, error) {
 	client, err := u.getClientByClientIDRepository.Execute(ctx, clientID)
 	if err != nil {
 		return output.Manifest{}, stackerror.NewUseCaseError(
@@ -48,7 +48,7 @@ func (u *getPWAManifestUseCase) Execute(ctx context.Context, clientID string, ba
 
 	iconSrc := "/locksmith.png"
 	if s := nullString(login.FaviconURL); s != "" {
-		iconSrc = baseURL + "/api/oauth2/favicon?client_id=" + clientID
+		iconSrc = "/api/oauth2/favicon?client_id=" + clientID
 	}
 
 	return output.Manifest{

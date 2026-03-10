@@ -19,23 +19,7 @@ func (h *pwaManifestHandler) Execute(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	scheme := r.Header.Get("X-Forwarded-Proto")
-	if scheme == "" {
-		if r.TLS != nil {
-			scheme = "https"
-		} else {
-			scheme = "http"
-		}
-	}
-
-	host := r.Header.Get("X-Forwarded-Host")
-	if host == "" {
-		host = r.Host
-	}
-
-	baseURL := scheme + "://" + host
-
-	manifest, err := h.getPWAManifestUseCase.Execute(r.Context(), clientID, baseURL)
+	manifest, err := h.getPWAManifestUseCase.Execute(r.Context(), clientID)
 	if err != nil {
 		stackerror.HttpResponse(w, "HANDLER: PWAManifestHandler", err)
 		return
