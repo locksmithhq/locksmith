@@ -29,7 +29,6 @@ const authController =
       confirmPassword: '',
       newPasswordRules: [
         (v) => !!v || 'New password is required',
-        (v) => v.length >= 8 || 'Password must be at least 8 characters',
       ],
       confirmPasswordRules: [
         (v) => !!v || 'Confirmation is required',
@@ -137,6 +136,31 @@ const authController =
         if (!state.client) {
           throw new Error('Could not fetch client information')
         }
+
+        const clientName = state.client.name
+        if (clientName) {
+          document.title = clientName
+          const metaTitle = document.querySelector('meta[name="apple-mobile-web-app-title"]')
+          if (metaTitle) metaTitle.setAttribute('content', clientName)
+        }
+
+        const faviconURL = state.client.login?.favicon_url
+        if (faviconURL) {
+          let link = document.querySelector("link[rel~='icon']")
+          if (!link) {
+            link = document.createElement('link')
+            link.rel = 'icon'
+            document.head.appendChild(link)
+          }
+          link.href = `/api/oauth2/favicon?client_id=${state.clientId}`
+        }
+
+        const existingManifest = document.querySelector("link[rel='manifest']")
+        if (existingManifest) existingManifest.remove()
+        const manifestLink = document.createElement('link')
+        manifestLink.rel = 'manifest'
+        manifestLink.href = `/api/oauth2/manifest?client_id=${state.clientId}`
+        document.head.appendChild(manifestLink)
       } catch (err) {
         state.error = err.message
         console.error('Failed to initialize auth:', err)

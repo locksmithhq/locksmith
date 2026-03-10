@@ -69,6 +69,31 @@ const registerController =
           throw new Error('Could not fetch client information')
         }
 
+        const clientName = state.client.name
+        if (clientName) {
+          document.title = clientName
+          const metaTitle = document.querySelector('meta[name="apple-mobile-web-app-title"]')
+          if (metaTitle) metaTitle.setAttribute('content', clientName)
+        }
+
+        const faviconURL = state.client.signup?.favicon_url
+        if (faviconURL) {
+          let link = document.querySelector("link[rel~='icon']")
+          if (!link) {
+            link = document.createElement('link')
+            link.rel = 'icon'
+            document.head.appendChild(link)
+          }
+          link.href = `/api/oauth2/favicon?client_id=${state.clientId}`
+        }
+
+        const existingManifest = document.querySelector("link[rel='manifest']")
+        if (existingManifest) existingManifest.remove()
+        const manifestLink = document.createElement('link')
+        manifestLink.rel = 'manifest'
+        manifestLink.href = `/api/oauth2/manifest?client_id=${state.clientId}`
+        document.head.appendChild(manifestLink)
+
         if (state.client.signup) {
           state.registerConfig = {
             ...state.registerConfig,
