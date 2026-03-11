@@ -212,7 +212,9 @@
                 :variant="controller.registerConfig.input_variant || 'outlined'"
                 density="comfortable"
                 prepend-inner-icon="mdi-lock-outline"
-                type="password"
+                :append-inner-icon="showPassword ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
+                @click:append-inner="showPassword = !showPassword"
+                :type="showPassword ? 'text' : 'password'"
                 hide-details="auto"
                 class="mb-8"
                 :rules="controller.passwordRules"
@@ -297,7 +299,7 @@
 </template>
 
 <script setup>
-import { computed, watch, useTemplateRef } from 'vue'
+import { ref, computed, watch, useTemplateRef } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { registerControllerImpl } from '../di/di'
 import { useRouter, useRoute } from 'vue-router'
@@ -307,6 +309,7 @@ const route = useRoute()
 const { locale } = useI18n()
 const controller = registerControllerImpl()
 const customHtmlContainer = useTemplateRef('customHtmlContainer')
+const showPassword = ref(false)
 
 // Logic to handle events in custom HTML
 watch(
