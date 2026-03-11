@@ -53,9 +53,11 @@
           <div class="field-label">{{ $t('login.password_label') }}</div>
           <v-text-field
             v-model="controller.form.password"
-            type="password"
+            :type="showPassword ? 'text' : 'password'"
             variant="outlined"
             prepend-inner-icon="mdi-lock-outline"
+            :append-inner-icon="showPassword ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
+            @click:append-inner="showPassword = !showPassword"
             color="primary"
             class="mb-7"
             :error-messages="controller.errors.password"
@@ -94,11 +96,13 @@
 </template>
 
 <script setup>
+import { ref } from 'vue'
 import Keys from '@/module/core/component/keys.vue'
 import Logo from '@/module/core/component/logo.vue'
 import { loginControllerImpl } from '../di/di'
 
 const controller = loginControllerImpl()
+const showPassword = ref(false)
 </script>
 
 <style scoped>
