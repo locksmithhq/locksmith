@@ -199,7 +199,9 @@
                   "
                   density="comfortable"
                   prepend-inner-icon="mdi-lock-outline"
-                  type="password"
+                  :append-inner-icon="showPassword ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
+                  @click:append-inner="showPassword = !showPassword"
+                  :type="showPassword ? 'text' : 'password'"
                   hide-details="auto"
                   class="mb-6"
                   :rules="controller.passwordRules"
@@ -296,7 +298,9 @@
                 :variant="controller.client?.login?.input_variant || 'outlined'"
                 density="comfortable"
                 prepend-inner-icon="mdi-lock-reset"
-                type="password"
+                :append-inner-icon="showNewPassword ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
+                @click:append-inner="showNewPassword = !showNewPassword"
+                :type="showNewPassword ? 'text' : 'password'"
                 hide-details="auto"
                 class="mb-4"
                 :rules="controller.newPasswordRules"
@@ -310,7 +314,9 @@
                 :variant="controller.client?.login?.input_variant || 'outlined'"
                 density="comfortable"
                 prepend-inner-icon="mdi-lock-check"
-                type="password"
+                :append-inner-icon="showConfirmPassword ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
+                @click:append-inner="showConfirmPassword = !showConfirmPassword"
+                :type="showConfirmPassword ? 'text' : 'password'"
                 hide-details="auto"
                 class="mb-6"
                 :rules="controller.confirmPasswordRules"
@@ -399,7 +405,7 @@
 </template>
 
 <script setup>
-import { computed, watch, useTemplateRef } from 'vue'
+import { ref, computed, watch, useTemplateRef } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { authControllerImpl } from '../di/di'
 import { useRouter, useRoute } from 'vue-router'
@@ -409,6 +415,9 @@ const route = useRoute()
 const { locale } = useI18n()
 const controller = authControllerImpl()
 const customHtmlContainer = useTemplateRef('customHtmlContainer')
+const showPassword = ref(false)
+const showNewPassword = ref(false)
+const showConfirmPassword = ref(false)
 
 // Logic to handle events and content in custom HTML with Shadow DOM isolation
 watch(
