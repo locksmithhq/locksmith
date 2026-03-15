@@ -19,7 +19,13 @@ func (h *pwaManifestHandler) Execute(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	manifest, err := h.getPWAManifestUseCase.Execute(r.Context(), clientID)
+	redirectURI := r.URL.Query().Get("redirect_uri")
+	locale := r.URL.Query().Get("locale")
+	if locale == "" {
+		locale = "en"
+	}
+
+	manifest, err := h.getPWAManifestUseCase.Execute(r.Context(), clientID, redirectURI, locale)
 	if err != nil {
 		stackerror.HttpResponse(w, "HANDLER: PWAManifestHandler", err)
 		return
