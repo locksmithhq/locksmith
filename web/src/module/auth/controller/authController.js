@@ -159,7 +159,8 @@ const authController =
         if (existingManifest) existingManifest.remove()
         const manifestLink = document.createElement('link')
         manifestLink.rel = 'manifest'
-        manifestLink.href = `/api/oauth2/manifest?client_id=${state.clientId}`
+        const locale = route.params.locale || 'en'
+        manifestLink.href = `/api/oauth2/manifest?client_id=${state.clientId}&redirect_uri=${encodeURIComponent(state.redirectUri)}&locale=${locale}`
         document.head.appendChild(manifestLink)
       } catch (err) {
         state.error = err.message
