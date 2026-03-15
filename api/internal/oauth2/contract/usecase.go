@@ -37,5 +37,5 @@ type RegisterUseCase interface {
 }
 
 type GetPWAManifestUseCase interface {
-	Execute(ctx context.Context, clientID string) (output.Manifest, error)
+	Execute(ctx context.Context, clientID, redirectURI, locale string) (output.Manifest, error)
 }
