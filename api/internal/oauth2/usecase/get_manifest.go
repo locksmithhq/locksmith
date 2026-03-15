@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"net/http"
+	"net/url"
 
 	"github.com/locksmithhq/locksmith/api/internal/core/types/database"
 	"github.com/locksmithhq/locksmith/api/internal/core/types/stackerror"
@@ -23,7 +24,7 @@ func nullString(n database.Null) string {
 	return ""
 }
 
-func (u *getPWAManifestUseCase) Execute(ctx context.Context, clientID string) (output.Manifest, error) {
+func (u *getPWAManifestUseCase) Execute(ctx context.Context, clientID, redirectURI, locale string) (output.Manifest, error) {
 	client, err := u.getClientByClientIDRepository.Execute(ctx, clientID)
 	if err != nil {
 		return output.Manifest{}, stackerror.NewUseCaseError(
@@ -51,6 +52,11 @@ func (u *getPWAManifestUseCase) Execute(ctx context.Context, clientID string) (o
 		iconSrc = "/api/oauth2/favicon?client_id=" + clientID
 	}
 
+	startURL := "/" + locale + "/auth?client_id=" + url.QueryEscape(clientID)
+	if redirectURI != "" {
+		startURL += "&redirect_uri=" + url.QueryEscape(redirectURI)
+	}
+
 	return output.Manifest{
 		Name:            client.Name,
 		ShortName:       client.Name,
@@ -58,7 +64,7 @@ func (u *getPWAManifestUseCase) Execute(ctx context.Context, clientID string) (o
 		ThemeColor:      themeColor,
 		BackgroundColor: bgColor,
 		Display:         "standalone",
-		StartURL:        "/",
+		StartURL:        startURL,
 		Icons: []output.ManifestIcon{
 			{Src: iconSrc, Sizes: "192x192", Type: "image/png"},
 			{Src: iconSrc, Sizes: "512x512", Type: "image/png"},
