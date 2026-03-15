@@ -71,7 +71,18 @@ const routes = [
     children: [
       { path: 'auth', name: 'auth', component: Auth },
       { path: 'register', name: 'register', component: Register },
-      { path: 'login', name: 'login', component: Login },
+      {
+        path: 'login',
+        name: 'login',
+        component: Login,
+        beforeEnter: async (to, from, next) => {
+          const clientId = await resolveCustomDomain()
+          if (clientId) {
+            return next({ name: 'auth', params: { locale: to.params.locale || 'en' }, query: { client_id: clientId } })
+          }
+          return next()
+        },
+      },
       {
         path: '',
         component: Skeleton,
