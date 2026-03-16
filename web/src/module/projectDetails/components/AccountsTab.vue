@@ -7,7 +7,7 @@
           {{ $t('projectDetails.users') || 'User Directory' }}
         </p>
         <p class="text-caption section-subtitle mt-1">
-          {{ controller.accounts.length }} items registered
+          {{ controller.account.filter.totalItems }} items registered
         </p>
       </div>
       <v-btn
@@ -35,73 +35,71 @@
       bg-color="white"
       style="max-width: 360px"
       class="mb-4"
-      @update:modelValue="controller.fetchAccountsByProjectID"
+      @update:modelValue="controller.searchAccounts"
     />
 
-    <!-- Account List -->
-    <v-card v-if="controller.accounts.length > 0" elevation="0" rounded="lg" class="account-table-card">
-      <div
-        v-for="(account, index) in controller.accounts"
-        :key="index"
-      >
-        <div class="account-row px-4 py-2 d-flex align-center justify-space-between">
-          <div class="d-flex align-center" style="gap: 10px; min-width: 0">
-            <div class="item-avatar flex-shrink-0">
-              <v-icon color="primary" size="16">mdi-account-outline</v-icon>
-            </div>
-            <div style="min-width: 0">
-              <p class="text-body-2 font-weight-bold section-title mb-0 text-truncate">{{ account.name }}</p>
-              <p class="text-caption section-subtitle mb-0">@{{ account.username }} · {{ account.email }}</p>
-            </div>
+    <!-- Account Table -->
+    <v-data-table-server
+      v-model:page="controller.account.filter.page"
+      v-model:items-per-page="controller.account.filter.limit"
+      :headers="headers"
+      :items="controller.accounts"
+      :items-length="controller.account.filter.totalItems"
+      :loading="controller.account.loading"
+      density="comfortable"
+      rounded="lg"
+      class="account-table-card"
+      @update:options="controller.loadAccountOptions"
+    >
+      <template #item.name="{ item }">
+        <div class="d-flex align-center" style="gap: 10px; min-width: 0">
+          <div class="item-avatar flex-shrink-0">
+            <v-icon color="primary" size="16">mdi-account-outline</v-icon>
           </div>
-
-          <div class="d-flex align-center flex-shrink-0" style="gap: 8px">
-            <v-chip color="primary" variant="tonal" class="font-weight-bold">
-              {{ account.role_name || $t('users.noRole') }}
-            </v-chip>
-            <v-btn
-              icon="mdi-devices"
-              variant="text"
-              size="x-small"
-              color="secondary"
-              :title="$t('users.viewDevices')"
-              :to="`/${$route.params.locale}/projects/${$route.params.id}/users/${account.id}`"
-            />
-            <v-btn
-              icon="mdi-pencil-outline"
-              variant="text"
-              size="x-small"
-              color="primary"
-              @click="controller.account.openEditDialog(account)"
-            />
-            <v-btn icon="mdi-delete-outline" variant="text" size="x-small" color="error" />
+          <div style="min-width: 0">
+            <p class="text-body-2 font-weight-bold section-title mb-0 text-truncate">{{ item.name }}</p>
+            <p class="text-caption section-subtitle mb-0">@{{ item.username }} · {{ item.email }}</p>
           </div>
         </div>
-        <v-divider v-if="index < controller.accounts.length - 1" />
-      </div>
-    </v-card>
+      </template>
 
-    <!-- Pagination -->
-    <div class="d-flex justify-center mt-4" v-if="controller.account.filter.totalPages > 1">
-      <v-pagination
-        v-model="controller.account.filter.page"
-        :length="controller.account.filter.totalPages"
-        density="comfortable"
-        rounded="lg"
-        active-color="primary"
-        variant="flat"
-        @update:model-value="controller.fetchAccountsByProjectID"
-      />
-    </div>
+      <template #item.role_name="{ item }">
+        <v-chip color="primary" variant="tonal" class="font-weight-bold">
+          {{ item.role_name || $t('users.noRole') }}
+        </v-chip>
+      </template>
 
-    <!-- Empty State -->
-    <div v-if="controller.accounts.length === 0" class="d-flex flex-column align-center justify-center py-16 text-center">
-      <div class="empty-icon-wrap mb-4">
-        <v-icon size="28" color="grey-lighten-1">mdi-account-off-outline</v-icon>
-      </div>
-      <p class="text-subtitle-2 font-weight-semibold text-grey-darken-2">{{ $t('users.noUsersTitle') }}</p>
-      <p class="text-body-2 text-grey mt-1">{{ $t('users.noUsersDesc') }}</p>
-    </div>
+      <template #item.actions="{ item }">
+        <div class="d-flex align-center justify-end" style="gap: 4px">
+          <v-btn
+            icon="mdi-devices"
+            variant="text"
+            size="x-small"
+            color="secondary"
+            :title="$t('users.viewDevices')"
+            :to="`/${$route.params.locale}/projects/${$route.params.id}/users/${item.id}`"
+          />
+          <v-btn
+            icon="mdi-pencil-outline"
+            variant="text"
+            size="x-small"
+            color="primary"
+            @click="controller.account.openEditDialog(item)"
+          />
+          <v-btn icon="mdi-delete-outline" variant="text" size="x-small" color="error" />
+        </div>
+      </template>
+
+      <template #no-data>
+        <div class="d-flex flex-column align-center justify-center py-16 text-center">
+          <div class="empty-icon-wrap mb-4">
+            <v-icon size="28" color="grey-lighten-1">mdi-account-off-outline</v-icon>
+          </div>
+          <p class="text-subtitle-2 font-weight-semibold text-grey-darken-2">{{ $t('users.noUsersTitle') }}</p>
+          <p class="text-body-2 text-grey mt-1">{{ $t('users.noUsersDesc') }}</p>
+        </div>
+      </template>
+    </v-data-table-server>
 
     <!-- Device Sessions Dialog -->
     <v-dialog v-model="controller.deviceDialog.open" max-width="780px" scrollable>
@@ -369,12 +367,23 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
+
 const props = defineProps({
   controller: {
     type: Object,
     required: true,
   },
 })
+
+const headers = computed(() => [
+  { title: t('users.name'), key: 'name', sortable: false },
+  { title: t('users.roles'), key: 'role_name', sortable: false, width: '160px' },
+  { title: '', key: 'actions', sortable: false, align: 'end', width: '120px' },
+])
 
 function deviceIcon(deviceType) {
   const icons = {
@@ -426,14 +435,7 @@ async function handleRevoke(session) {
   background: #f9fafb;
 }
 .account-table-card {
-  background: white;
   border: 1px solid #eef0f6;
-}
-.account-row {
-  transition: background 0.15s ease;
-}
-.account-row:hover {
-  background: #f9fafb;
 }
 .item-avatar {
   width: 30px;

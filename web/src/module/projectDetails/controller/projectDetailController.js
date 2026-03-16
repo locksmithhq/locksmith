@@ -84,8 +84,9 @@ const projectDetailController =
           page: 1,
           limit: 10,
           search: '',
-          totalPages: 1,
+          totalItems: 0,
         },
+        loading: false,
         dialog: false,
         openDialog: () => {
           state.account.dialog = true
@@ -306,10 +307,24 @@ const projectDetailController =
         state.isEdit = false
       },
       fetchAccountsByProjectID: async () => {
-        await Promise.all([
-          fetchAccountsByProjectIDUseCase(state),
-          countAccountsByProjectIDUseCase(state),
-        ])
+        state.account.loading = true
+        try {
+          await Promise.all([
+            fetchAccountsByProjectIDUseCase(state),
+            countAccountsByProjectIDUseCase(state),
+          ])
+        } finally {
+          state.account.loading = false
+        }
+      },
+      loadAccountOptions: async ({ page, itemsPerPage }) => {
+        state.account.filter.page = page
+        state.account.filter.limit = itemsPerPage
+        await state.fetchAccountsByProjectID()
+      },
+      searchAccounts: async () => {
+        state.account.filter.page = 1
+        await state.fetchAccountsByProjectID()
       },
       fetchSessionsByProjectID: async () => {
         await Promise.all([
@@ -326,10 +341,6 @@ const projectDetailController =
     onMounted(async () => {
       await getProjectByIDUseCase(state)
       await getClientsByProjectIDUseCase(state)
-      await Promise.all([
-        fetchAccountsByProjectIDUseCase(state),
-        countAccountsByProjectIDUseCase(state),
-      ])
       await fetchRolesUseCase(state)
       await fetchModulesUseCase(state)
       await fetchActionsUseCase(state)
