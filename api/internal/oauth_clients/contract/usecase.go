@@ -29,5 +29,5 @@ type DeleteClientUseCase interface {
 }
 
 type ResolveCustomDomainUseCase interface {
-	Execute(ctx context.Context, hostname string) (string, error)
+	Execute(ctx context.Context, hostname string) (clientID string, redirectURI string, err error)
 }

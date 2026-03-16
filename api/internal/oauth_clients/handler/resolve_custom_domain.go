@@ -21,14 +21,14 @@ func (h *resolveCustomDomainHandler) Execute(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	clientID, err := h.resolveCustomDomainUseCase.Execute(r.Context(), hostname)
+	clientID, redirectURI, err := h.resolveCustomDomainUseCase.Execute(r.Context(), hostname)
 	if err != nil {
 		stackerror.HttpResponse(w, "ResolveCustomDomainHandler", err)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]string{"client_id": clientID})
+	json.NewEncoder(w).Encode(map[string]string{"client_id": clientID, "redirect_uri": redirectURI})
 }
 
 func NewResolveCustomDomainHandler(

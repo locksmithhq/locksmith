@@ -11,13 +11,13 @@ type resolveCustomDomainUseCase struct {
 	getClientByCustomDomainRepository contract.GetClientByCustomDomainRepository
 }
 
-func (u *resolveCustomDomainUseCase) Execute(ctx context.Context, hostname string) (string, error) {
-	clientID, err := u.getClientByCustomDomainRepository.Execute(ctx, hostname)
+func (u *resolveCustomDomainUseCase) Execute(ctx context.Context, hostname string) (string, string, error) {
+	clientID, redirectURI, err := u.getClientByCustomDomainRepository.Execute(ctx, hostname)
 	if err != nil {
-		return "", stackerror.NewUseCaseError("ResolveCustomDomainUseCase", err)
+		return "", "", stackerror.NewUseCaseError("ResolveCustomDomainUseCase", err)
 	}
 
-	return clientID, nil
+	return clientID, redirectURI, nil
 }
 
 func NewResolveCustomDomainUseCase(

@@ -33,5 +33,5 @@ type DeleteClientRepository interface {
 }
 
 type GetClientByCustomDomainRepository interface {
-	Execute(ctx context.Context, domain string) (string, error)
+	Execute(ctx context.Context, domain string) (clientID string, redirectURI string, err error)
 }
