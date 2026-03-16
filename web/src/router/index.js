@@ -13,25 +13,28 @@ import i18n from '@/plugins/i18n'
 import { axiosInstance } from '@/plugins/axios'
 
 let _cachedClientId = null
+let _cachedRedirectUri = null
 let _resolved = false
 
 const resolveCustomDomain = async () => {
-  if (_resolved) return _cachedClientId
+  if (_resolved) return { clientId: _cachedClientId, redirectUri: _cachedRedirectUri }
   const hostname = window.location.hostname
   const skip = ['localhost', '127.0.0.1']
   const skipIncludes = ['github.dev', 'gitpod.io']
   if (skip.includes(hostname) || skipIncludes.some((s) => hostname.includes(s))) {
     _resolved = true
-    return null
+    return { clientId: null, redirectUri: null }
   }
   try {
     const { data } = await axiosInstance.get('/oauth2/resolve-domain', { params: { hostname } })
     _cachedClientId = data.client_id || null
+    _cachedRedirectUri = data.redirect_uri || null
   } catch {
     _cachedClientId = null
+    _cachedRedirectUri = null
   }
   _resolved = true
-  return _cachedClientId
+  return { clientId: _cachedClientId, redirectUri: _cachedRedirectUri }
 }
 
 const routes = [
@@ -39,9 +42,11 @@ const routes = [
     path: '/',
     component: RouterView,
     beforeEnter: async (to, from, next) => {
-      const clientId = await resolveCustomDomain()
+      const { clientId, redirectUri } = await resolveCustomDomain()
       if (clientId) {
-        return next({ name: 'auth', params: { locale: i18n.global.locale.value || 'en' }, query: { client_id: clientId } })
+        const query = { client_id: clientId }
+        if (redirectUri) query.redirect_uri = redirectUri
+        return next({ name: 'auth', params: { locale: i18n.global.locale.value || 'en' }, query })
       }
       return next('/en')
     },
@@ -65,6 +70,9 @@ const routes = [
       if (clientId && !to.query.client_id) {
         to.query.client_id = clientId
       }
+      if (_cachedRedirectUri && !to.query.redirect_uri) {
+        to.query.redirect_uri = _cachedRedirectUri
+      }
 
       return next()
     },
@@ -76,9 +84,11 @@ const routes = [
         name: 'login',
         component: Login,
         beforeEnter: async (to, from, next) => {
-          const clientId = await resolveCustomDomain()
+          const { clientId, redirectUri } = await resolveCustomDomain()
           if (clientId) {
-            return next({ name: 'auth', params: { locale: to.params.locale || 'en' }, query: { client_id: clientId } })
+            const query = { client_id: clientId }
+            if (redirectUri) query.redirect_uri = redirectUri
+            return next({ name: 'auth', params: { locale: to.params.locale || 'en' }, query })
           }
           return next()
         },
