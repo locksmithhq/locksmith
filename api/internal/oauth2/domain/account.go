@@ -9,6 +9,7 @@ type Account struct {
 	Email              string        `json:"email" db:"email"`
 	Username           string        `json:"username" db:"username"`
 	Password           string        `json:"password" db:"password"`
+	RoleName           string        `json:"role_name" db:"role_name"`
 	CreatedAt          string        `json:"created_at" db:"created_at"`
 	UpdatedAt          string        `json:"updated_at" db:"updated_at"`
 	DeletedAt          database.Null `json:"deleted_at,omitempty" db:"deleted_at"`
