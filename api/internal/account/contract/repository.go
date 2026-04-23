@@ -34,3 +34,7 @@ type GetAccountByProjectIDAndIDRepository interface {
 type CountAccountsByProjectIDRepository interface {
 	Execute(context.Context, string, paginate.PaginationParams) (int64, error)
 }
+
+type FetchSocialProvidersByAccountIDsRepository interface {
+	Execute(context.Context, []string) (map[string][]string, error)
+}
