@@ -40,7 +40,7 @@ func (u *createClientUseCase) Execute(ctx context.Context, in input.Client) (out
 		return output.Client{}, stackerror.NewUseCaseError("CreateClientUseCase", err)
 	}
 
-	return output.NewClientFromDomain(client), nil
+	return output.NewCreatedClientFromDomain(client), nil
 }
 
 func NewCreateClientUseCase(
