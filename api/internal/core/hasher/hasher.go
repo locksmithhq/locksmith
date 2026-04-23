@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"sync"
 
 	"golang.org/x/crypto/argon2"
 )
@@ -18,6 +19,25 @@ const (
 	saltLength         = 16
 	keyLength   uint32 = 32
 )
+
+var (
+	dummyHashOnce sync.Once
+	dummyHash     string
+)
+
+// PerformDummyVerify runs a full argon2id verification against a dummy hash to
+// equalize timing when an account is not found, preventing user enumeration via
+// response timing (CWE-204).
+func PerformDummyVerify(password string) {
+	dummyHashOnce.Do(func() {
+		h, err := Hash("_locksmith_dummy_noop_password_")
+		if err != nil {
+			panic("hasher: failed to compute dummy hash: " + err.Error())
+		}
+		dummyHash = h
+	})
+	Verify(password, dummyHash) //nolint:errcheck
+}
 
 func Hash(password string) (string, error) {
 	salt := make([]byte, saltLength)
