@@ -14,7 +14,7 @@ require (
 	github.com/locksmithhq/locksmith-go v1.0.8
 	github.com/markbates/goth v1.82.0
 	github.com/spf13/cobra v1.10.1
-	golang.org/x/crypto v0.45.0
+	golang.org/x/crypto v0.50.0
 	golang.org/x/image v0.39.0
 	gopkg.in/yaml.v2 v2.4.0
 )
@@ -41,6 +41,6 @@ require (
 	github.com/stretchr/testify v1.11.1 // indirect
 	github.com/zeebo/xxh3 v1.0.2 // indirect
 	golang.org/x/oauth2 v0.30.0 // indirect
-	golang.org/x/sys v0.38.0 // indirect
+	golang.org/x/sys v0.43.0 // indirect
 	golang.org/x/text v0.36.0 // indirect
 )
