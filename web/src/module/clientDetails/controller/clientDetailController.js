@@ -13,6 +13,25 @@ const clientDetailController = (usecase) => () => {
     loginConfig: { enabled: true },
     registerConfig: { enabled: true },
     roles: [],
+    socialProviders: {
+      google: { enabled: false, client_key: '', client_secret: '' },
+    },
+    savingSocial: false,
+    saveSocialError: null,
+    saveSocialSuccess: false,
+    saveSocialProvider: async (provider) => {
+      state.savingSocial = true
+      state.saveSocialError = null
+      state.saveSocialSuccess = false
+      try {
+        await usecase.upsertSocialProviderUseCase(state, provider)
+        state.saveSocialSuccess = true
+      } catch (err) {
+        state.saveSocialError = err?.response?.data || 'Error saving social provider'
+      } finally {
+        state.savingSocial = false
+      }
+    },
     editClient: () => {
       state.defaultClient = { ...state.client }
       state.isEdit = true
@@ -82,6 +101,11 @@ const clientDetailController = (usecase) => () => {
       await usecase.getSignupByClientIDUseCase(state)
     } catch {
       // signup config may not exist yet
+    }
+    try {
+      await usecase.getSocialProvidersUseCase(state)
+    } catch {
+      // social providers may not exist yet
     }
   })
 
