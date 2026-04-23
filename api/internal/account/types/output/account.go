@@ -30,11 +30,16 @@ type Account struct {
 	DeletedAt          database.Null `json:"deleted_at,omitempty"`
 	RoleName           string        `json:"role_name"`
 	MustChangePassword bool          `json:"must_change_password"`
+	SocialProviders    []string      `json:"social_providers"`
 }
 
 func NewAccountFromDomain(
 	account domain.Account,
 ) Account {
+	socialProviders := account.SocialProviders
+	if socialProviders == nil {
+		socialProviders = []string{}
+	}
 	return Account{
 		ID:                 account.ID,
 		ProjectID:          account.ProjectID,
@@ -46,6 +51,7 @@ func NewAccountFromDomain(
 		DeletedAt:          account.DeletedAt,
 		RoleName:           account.RoleName,
 		MustChangePassword: account.MustChangePassword,
+		SocialProviders:    socialProviders,
 	}
 }
 
