@@ -28,9 +28,17 @@ bin/
 dist/
 deploy/
 
+# Go test artifacts
+coverage.out
+*.test
+*.prof
+
 # IDE / OS
 .agent
 .idea/
 .vscode/
 .DS_Store
 Thumbs.db
+
+# Claude Code local settings
+.claude/
