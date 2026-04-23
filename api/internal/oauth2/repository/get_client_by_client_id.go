@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/booscaaa/initializers/postgres/types"
+	"github.com/locksmithhq/locksmith/api/internal/core/crypto"
 	"github.com/locksmithhq/locksmith/api/internal/core/types/stackerror"
 	"github.com/locksmithhq/locksmith/api/internal/oauth2/contract"
 	"github.com/locksmithhq/locksmith/api/internal/oauth2/domain"
@@ -17,22 +18,28 @@ type getClientByClientIDRepository struct {
 func (r *getClientByClientIDRepository) Execute(ctx context.Context, clientID string) (domain.Client, error) {
 	var client domain.Client
 
-	query := `SELECT 
-		oauth_clients.id, 
-		oauth_clients.project_id, 
-		oauth_clients.client_id, 
-		oauth_clients.client_secret, 
-		oauth_clients.redirect_uris, 
-		oauth_clients.grant_types, 
-		oauth_clients.name, 
-		oauth_clients.created_at, 
-		oauth_clients.updated_at, 
+	query := `SELECT
+		oauth_clients.id,
+		oauth_clients.project_id,
+		oauth_clients.client_id,
+		oauth_clients.client_secret,
+		oauth_clients.redirect_uris,
+		oauth_clients.grant_types,
+		oauth_clients.name,
+		oauth_clients.created_at,
+		oauth_clients.updated_at,
+		oauth_clients.require_pkce,
 		projects.domain
-	FROM oauth_clients 
+	FROM oauth_clients
 	INNER JOIN projects ON oauth_clients.project_id = projects.id
 	WHERE oauth_clients.client_id = $1`
 
 	err := r.database.QueryRowxContext(ctx, query, clientID).StructScan(&client)
+	if err != nil {
+		return domain.Client{}, stackerror.NewRepositoryError("GetClientByClientIDRepository", err)
+	}
+
+	client.ClientSecret, err = crypto.Decrypt(client.ClientSecret)
 	if err != nil {
 		return domain.Client{}, stackerror.NewRepositoryError("GetClientByClientIDRepository", err)
 	}
