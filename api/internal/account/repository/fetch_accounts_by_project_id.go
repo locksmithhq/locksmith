@@ -23,6 +23,7 @@ func (r *fetchAccountsByProjectIDRepository) Execute(ctx context.Context, projec
 		Table("accounts").
 		Select("id", "name", "email", "username", "project_id", "created_at", "updated_at", "role_name", "must_change_password").
 		Where("project_id = ?", projectID).
+		Where("deleted_at IS NULL").
 		FromStruct(params).
 		BuildSQL()
 
