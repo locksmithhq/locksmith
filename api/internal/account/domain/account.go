@@ -14,6 +14,7 @@ type Account struct {
 	DeletedAt          database.Null `json:"deleted_at" db:"deleted_at" paginate:"deleted_at"`
 	RoleName           string        `json:"role_name" db:"role_name" paginate:"role_name"`
 	MustChangePassword bool          `json:"must_change_password" db:"must_change_password" paginate:"must_change_password"`
+	SocialProviders    []string      `json:"social_providers" db:"-" paginate:"-"`
 }
 
 type AccountOption func(*Account)
