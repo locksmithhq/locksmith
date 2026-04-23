@@ -2,6 +2,8 @@ package repository
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 
 	"github.com/booscaaa/initializers/postgres/types"
 	"github.com/locksmithhq/locksmith/api/internal/core/types/stackerror"
@@ -21,7 +23,10 @@ func (r *getAuthCodeByCodeRepository) Execute(ctx context.Context, code string) 
 				FROM oauth_authorization_codes 
 				WHERE code = $1 LIMIT 1`
 
-	err := r.database.GetContext(ctx, &authCode, query, code)
+	h := sha256.Sum256([]byte(code))
+	codeHash := hex.EncodeToString(h[:])
+
+	err := r.database.GetContext(ctx, &authCode, query, codeHash)
 	if err != nil {
 		return domain.AuthCode{}, stackerror.NewRepositoryError("GetAuthCodeByCodeRepository", err)
 	}
