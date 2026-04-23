@@ -97,6 +97,24 @@ func (u *loginUseCase) Execute(ctx context.Context, in input.Login) (output.Logi
 		}, nil
 	}
 
+	if client.RequirePKCE && in.CodeChallenge == "" {
+		return output.Login{}, stackerror.NewUseCaseError(
+			"LoginUseCase",
+			fmt.Errorf("pkce required for this client"),
+			stackerror.WithMessage("code_challenge is required for this client"),
+			stackerror.WithStatusCode(http.StatusBadRequest),
+		)
+	}
+
+	if in.CodeChallenge != "" && in.CodeChallengeMethod != "S256" {
+		return output.Login{}, stackerror.NewUseCaseError(
+			"LoginUseCase",
+			fmt.Errorf("unsupported code_challenge_method: %q", in.CodeChallengeMethod),
+			stackerror.WithMessage("only S256 is accepted as code_challenge_method"),
+			stackerror.WithStatusCode(http.StatusBadRequest),
+		)
+	}
+
 	// Generate random code
 	b := make([]byte, 32)
 	_, err = rand.Read(b)
