@@ -20,11 +20,9 @@ up: ## Inicia todos os serviços (database + api) na mesma network
 	@echo "$(GREEN)Todos os serviços estão rodando!$(NC)"
 	@echo "$(YELLOW)Use 'make logs' para ver os logs$(NC)"
 	@echo "$(YELLOW)Use 'make logs-db' para ver os logs do banco de dados$(NC)"
-	@echo "$(YELLOW)Use 'make logs-pgweb' para ver os logs do pgweb$(NC)"
 	@echo "$(YELLOW)Use 'make logs-api' para ver os logs da API$(NC)"
 	@echo "$(YELLOW)Use 'make logs-web' para ver os logs da web$(NC)"
 	@echo "$(YELLOW)Use 'make logs-docs' para ver os logs da documentação$(NC)"
-	@echo "$(YELLOW)Use 'make open-pgweb' para abrir o pgweb no navegador$(NC)"
 	@echo "$(YELLOW)Use 'make open-web' para abrir a web no navegador$(NC)"
 	@echo "$(YELLOW)Use 'make open-api' para abrir a API no navegador$(NC)"
 	@echo "$(YELLOW)Use 'make open-docs' para abrir a documentação no navegador$(NC)"
@@ -73,7 +71,6 @@ prune: ## Remove containers, networks e imagens não utilizadas
 	@docker system prune -f
 	@echo "$(GREEN)Limpeza do sistema concluída$(NC)"
 
-open-pgweb: ## Abre o pgweb no navegador
 	@open http://localhost:10002
 
 open-web: ## Abre a web no navegador
@@ -85,15 +82,15 @@ open-api: ## Abre a API no navegador
 open-docs: ## Abre a documentação no navegador
 	@open http://localhost:${DOCS_PORT}
 
-build-prod:
-	@echo "$(GREEN)Preparando build de produção...$(NC)"
-	@cp -r api locksmith/
-	@cp -r config locksmith/
-	@cp -r web locksmith/
-	@echo "$(GREEN)Arquivos copiados para a pasta locksmith$(NC)"
-	@docker buildx build --platform linux/amd64,linux/arm64 -t booscaaa/locksmith:latest -f locksmith/Dockerfile . --push
-	@rm -rf locksmith/api locksmith/config locksmith/web
-	@echo "$(GREEN)Arquivos temporários removidos da pasta locksmith$(NC)"
+build-prod: ## Gera imagem de produção multi-arch e faz push para o Docker Hub
+	@echo "$(GREEN)Gerando imagem de produção (linux/amd64 + linux/arm64)...$(NC)"
+	@docker buildx build \
+		--platform linux/amd64,linux/arm64 \
+		-t booscaaa/locksmith:latest \
+		-f locksmith/Dockerfile \
+		. \
+		--push
+	@echo "$(GREEN)Imagem publicada: booscaaa/locksmith:latest$(NC)"
 	
 
 
