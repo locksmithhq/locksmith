@@ -13,6 +13,7 @@ type Client struct {
 	RedirectURIs string   `json:"redirect_uris"`
 	GrantTypes   string   `json:"grant_types"`
 	CustomDomain string   `json:"custom_domain"`
+	RequirePKCE  bool     `json:"require_pkce"`
 	Roles        []string `json:"roles"`
 }
 
@@ -25,5 +26,6 @@ func (c Client) ToDomain() domain.Client {
 		domain.WithRedirectURIs(c.RedirectURIs),
 		domain.WithGrantTypes(c.GrantTypes),
 		domain.WithCustomDomain(database.ParseNull(c.CustomDomain)),
+		domain.WithRequirePKCE(c.RequirePKCE),
 	)
 }
