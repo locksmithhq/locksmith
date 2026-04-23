@@ -1,0 +1,35 @@
+# Version control
+.git/
+.gitignore
+
+# Secrets and environment files
+.env
+.env.*
+!.env.example
+
+# Node
+web/node_modules/
+web/.nuxt/
+web/.output/
+web/dist/
+
+# Go
+api/vendor/
+api/bin/
+
+# Dev tooling
+api/.air.toml
+**/.DS_Store
+
+# Docs and non-build files
+docs/
+*.md
+!README.md
+
+# CI
+.github/
+
+# Temp build artifacts inside locksmith/ (from old cp workaround)
+locksmith/api/
+locksmith/config/
+locksmith/web/
