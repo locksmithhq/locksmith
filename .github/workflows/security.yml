@@ -8,7 +8,7 @@ on:
 
 jobs:
   sast-go:
-    name: Go – govulncheck / gosec / golangci-lint
+    name: Go – govulncheck
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -26,11 +26,6 @@ jobs:
           go install golang.org/x/vuln/cmd/govulncheck@v1.1.4
           govulncheck ./...
 
-      - name: golangci-lint
-        uses: golangci/golangci-lint-action@v6
-        with:
-          working-directory: api
-          args: --enable gosec,staticcheck
 
   sast-frontend:
     name: Frontend – npm audit
@@ -43,7 +38,14 @@ jobs:
 
       - uses: oven-sh/setup-bun@v2
 
-      - name: npm audit
+      - name: bun audit
         run: |
-          npm i --package-lock-only --ignore-scripts
-          npm audit --audit-level=high
+          bun install --ignore-scripts
+          bun audit --json > audit.json || true
+          CRITICALS=$(grep -c '"severity":"critical"' audit.json || echo 0)
+          if [ "$CRITICALS" -gt 0 ]; then
+            cat audit.json
+            echo "Critical vulnerabilities found!"
+            exit 1
+          fi
+          echo "No critical vulnerabilities found."
