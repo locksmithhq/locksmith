@@ -63,10 +63,12 @@ func (h *callbackHandler) Execute(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.SetCookie(w, &http.Cookie{
-		Name:   "pkce_cv",
-		Value:  "",
-		Path:   "/",
-		MaxAge: -1,
+		Name:     "pkce_cv",
+		Value:    "",
+		Path:     "/",
+		MaxAge:   -1,
+		Secure:   true,
+		SameSite: http.SameSiteStrictMode,
 	})
 
 	setCookies(w, r, token.AccessToken, token.RefreshToken, token.ExpiresIn)
