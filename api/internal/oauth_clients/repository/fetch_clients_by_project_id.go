@@ -5,6 +5,7 @@ import (
 
 	"github.com/booscaaa/go-paginate/v3/paginate"
 	"github.com/booscaaa/initializers/postgres/types"
+	"github.com/locksmithhq/locksmith/api/internal/core/crypto"
 	"github.com/locksmithhq/locksmith/api/internal/core/types/stackerror"
 	"github.com/locksmithhq/locksmith/api/internal/oauth_clients/contract"
 	"github.com/locksmithhq/locksmith/api/internal/oauth_clients/domain"
@@ -21,7 +22,7 @@ func (r *fetchClientsByProjectIDRepository) Execute(ctx context.Context, project
 	query, args, err := paginate.NewBuilder().
 		Model(&domain.Client{}).
 		Table("oauth_clients").
-		Select("id, project_id, client_id, client_secret, redirect_uris, grant_types, name, created_at, updated_at, custom_domain").
+		Select("id, project_id, client_id, client_secret, redirect_uris, grant_types, name, created_at, updated_at, custom_domain, require_pkce").
 		Where("project_id = ?", projectID).
 		FromStruct(params).
 		BuildSQL()
@@ -35,6 +36,12 @@ func (r *fetchClientsByProjectIDRepository) Execute(ctx context.Context, project
 		return nil, stackerror.NewRepositoryError("FetchClientsByProjectIDRepository", err)
 	}
 
+	for i := range clients {
+		clients[i].ClientSecret, err = crypto.Decrypt(clients[i].ClientSecret)
+		if err != nil {
+			return nil, stackerror.NewRepositoryError("FetchClientsByProjectIDRepository", err)
+		}
+	}
 	return clients, nil
 }
 
