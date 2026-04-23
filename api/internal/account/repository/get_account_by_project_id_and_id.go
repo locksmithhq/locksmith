@@ -29,7 +29,7 @@ func (r *getAccountByProjectIDAndIDRepository) Execute(ctx context.Context, proj
 		deleted_at,
 		role_name,
 		must_change_password
-	FROM accounts WHERE id = $1 AND project_id = $2`
+	FROM accounts WHERE id = $1 AND project_id = $2 AND deleted_at IS NULL`
 	err := r.database.GetContext(ctx, &account, query, id, projectID)
 	if err != nil {
 		return domain.Account{}, stackerror.NewRepositoryError("GetAccountByEmailAndProjectIDRepository", err)
