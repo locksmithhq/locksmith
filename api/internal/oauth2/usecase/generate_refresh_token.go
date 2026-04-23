@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
+	"log"
 	"net/http"
 	"time"
 
@@ -18,11 +19,13 @@ import (
 )
 
 type generateRefreshTokenUseCase struct {
-	getRefreshTokenByHashRepository contract.GetRefreshTokenByHashRepository
-	updateRefreshTokenRepository    contract.UpdateRefreshTokenRepository
-	createRefreshTokenRepository    contract.CreateRefreshTokenRepository
-	getClientByClientIDRepository   contract.GetClientByClientIDRepository
-	getClientByIDRepository         contract.GetClientByIDRepository
+	getRefreshTokenByHashRepository       contract.GetRefreshTokenByHashRepository
+	updateRefreshTokenRepository          contract.UpdateRefreshTokenRepository
+	createRefreshTokenRepository          contract.CreateRefreshTokenRepository
+	getClientByClientIDRepository         contract.GetClientByClientIDRepository
+	getClientByIDRepository               contract.GetClientByIDRepository
+	revokeRefreshTokensBySessionRepository contract.RevokeRefreshTokensBySessionRepository
+	revokeUserSessionRepository           contract.RevokeUserSessionRepository
 }
 
 // Execute implements contract.GenerateRefreshTokenUseCase.
@@ -40,8 +43,15 @@ func (u *generateRefreshTokenUseCase) Execute(ctx context.Context, refreshToken 
 
 	// 3. Validate token
 	if storedToken.Revoked {
-		// TODO: Security Alert! Attempt to use revoked token.
-		// Ideally, we should revoke the entire chain here.
+		// Security alert: a revoked token was presented — possible token theft.
+		// Revoke the entire session chain to force re-authentication.
+		if !storedToken.SessionID.IsNull() {
+			sessionID := storedToken.SessionID.String()
+			_ = u.revokeRefreshTokensBySessionRepository.Execute(ctx, sessionID)
+			_ = u.revokeUserSessionRepository.Execute(ctx, sessionID)
+		}
+		log.Printf("[SECURITY] token_reuse_detected account_id=%s client_id=%s token_hash=%s",
+			storedToken.AccountID, storedToken.ClientID, tokenHash)
 		return output.AccessToken{}, fmt.Errorf("refresh token revoked")
 	}
 
@@ -119,12 +129,16 @@ func NewGenerateRefreshTokenUseCase(
 	createRefreshTokenRepository contract.CreateRefreshTokenRepository,
 	getClientByClientIDRepository contract.GetClientByClientIDRepository,
 	getClientByIDRepository contract.GetClientByIDRepository,
+	revokeRefreshTokensBySessionRepository contract.RevokeRefreshTokensBySessionRepository,
+	revokeUserSessionRepository contract.RevokeUserSessionRepository,
 ) contract.GenerateRefreshTokenUseCase {
 	return &generateRefreshTokenUseCase{
-		getRefreshTokenByHashRepository: getRefreshTokenByHashRepository,
-		updateRefreshTokenRepository:    updateRefreshTokenRepository,
-		createRefreshTokenRepository:    createRefreshTokenRepository,
-		getClientByClientIDRepository:   getClientByClientIDRepository,
-		getClientByIDRepository:         getClientByIDRepository,
+		getRefreshTokenByHashRepository:        getRefreshTokenByHashRepository,
+		updateRefreshTokenRepository:           updateRefreshTokenRepository,
+		createRefreshTokenRepository:           createRefreshTokenRepository,
+		getClientByClientIDRepository:          getClientByClientIDRepository,
+		getClientByIDRepository:                getClientByIDRepository,
+		revokeRefreshTokensBySessionRepository: revokeRefreshTokensBySessionRepository,
+		revokeUserSessionRepository:            revokeUserSessionRepository,
 	}
 }
