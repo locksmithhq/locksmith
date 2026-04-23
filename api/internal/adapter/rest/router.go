@@ -15,6 +15,7 @@ import (
 	oauth2Rest "github.com/locksmithhq/locksmith/api/internal/oauth2/rest"
 	oauthClientsRest "github.com/locksmithhq/locksmith/api/internal/oauth_clients/rest"
 	oauthClientsLoginRest "github.com/locksmithhq/locksmith/api/internal/oauth_clients_login/rest"
+	oauthClientSocialProvidersRest "github.com/locksmithhq/locksmith/api/internal/oauth_client_social_providers/rest"
 	oauthClientsSignupRest "github.com/locksmithhq/locksmith/api/internal/oauth_clients_signup/rest"
 	projectRest "github.com/locksmithhq/locksmith/api/internal/project/rest"
 	sessionRest "github.com/locksmithhq/locksmith/api/internal/session/rest"
@@ -36,6 +37,12 @@ func Initialize() {
 
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
+	r.Use(func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			r.Body = http.MaxBytesReader(w, r.Body, 1<<20) // 1 MB
+			next.ServeHTTP(w, r)
+		})
+	})
 
 	r.Route("/api", func(r chi.Router) {
 		oauth2Rest.InitializeOAuth2Router(r)
@@ -44,6 +51,7 @@ func Initialize() {
 		oauthClientsRest.InitializeOauthClientsRouter(r)
 		oauthClientsLoginRest.InitializeOauthClientsLoginRouter(r)
 		oauthClientsSignupRest.InitializeOauthClientsSignupRouter(r)
+		oauthClientSocialProvidersRest.InitializeOauthClientSocialProvidersRouter(r)
 		accountsRest.InitializeAccountsRouter(r)
 		sessionRest.InitializeSessionRouter(r)
 		dashboardRest.InitializeDashboardRouter(r)
