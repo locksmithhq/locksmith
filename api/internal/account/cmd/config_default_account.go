@@ -2,12 +2,14 @@ package cmd
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"os"
 
 	"github.com/locksmithhq/locksmith/api/internal/account/contract"
 	"github.com/locksmithhq/locksmith/api/internal/account/types/input"
 	"github.com/locksmithhq/locksmith/api/internal/acl"
+	"github.com/locksmithhq/locksmith/api/internal/core/types/stackerror"
 	"gopkg.in/yaml.v2"
 )
 
@@ -32,7 +34,7 @@ func (c *configDefaultAccountCMD) Execute(ctx context.Context, projectID string)
 		} `yaml:"default_account"`
 	}
 
-	if err := yaml.Unmarshal(data, &seederConfig); err != nil {
+	if err := yaml.Unmarshal([]byte(os.ExpandEnv(string(data))), &seederConfig); err != nil {
 		return fmt.Errorf("failed to unmarshal seeder config from %s: %w", filePath, err)
 	}
 
@@ -52,6 +54,9 @@ func (c *configDefaultAccountCMD) Execute(ctx context.Context, projectID string)
 
 	_, err = c.createAccountUseCase.Execute(ctx, in)
 	if err != nil {
+		if errors.Is(err, stackerror.ErrAlreadyExists) {
+			return nil
+		}
 		return fmt.Errorf("failed to create default account: %w", err)
 	}
 
