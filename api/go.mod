@@ -6,7 +6,7 @@ require (
 	github.com/booscaaa/go-paginate/v3 v3.0.9
 	github.com/booscaaa/initializers/postgres v1.0.2
 	github.com/booscaaa/initializers/validator v1.0.2
-	github.com/go-chi/chi/v5 v5.2.4
+	github.com/go-chi/chi/v5 v5.2.5
 	github.com/go-chi/cors v1.2.2
 	github.com/go-chi/httprate v0.15.0
 	github.com/google/uuid v1.6.0
