@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"errors"
 
 	"github.com/booscaaa/initializers/postgres/types"
 	"github.com/locksmithhq/locksmith/api/internal/core/hasher"
@@ -30,10 +31,14 @@ func (r *getAccountByEmailPasswordAndProjectIDRepository) Execute(ctx context.Co
 			updated_at,
 			deleted_at,
 			must_change_password
-		FROM accounts WHERE email = $1 AND project_id = $2
+		FROM accounts WHERE email = $1 AND project_id = $2 AND deleted_at IS NULL
 	`
 	err := r.database.GetContext(ctx, &account, query, email, projectID)
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			// Run dummy hash to equalize timing regardless of whether the email exists.
+			hasher.PerformDummyVerify(password)
+		}
 		return domain.Account{}, stackerror.NewRepositoryError("GetAccountByEmailPasswordAndProjectIDRepository", err)
 	}
 
