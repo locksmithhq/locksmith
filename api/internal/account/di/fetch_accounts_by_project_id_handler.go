@@ -11,9 +11,8 @@ import (
 func NewFetchAccountsByProjectIDHandler() contract.FetchAccountsByProjectIDHandler {
 	return handler.NewFetchAccountsByProjectIDHandler(
 		usecase.NewFetchAccountsByProjectIDUseCase(
-			repository.NewFetchAccountsByProjectIDRepository(
-				database.GetConnection(),
-			),
+			repository.NewFetchAccountsByProjectIDRepository(database.GetConnection()),
+			repository.NewFetchSocialProvidersByAccountIDsRepository(database.GetConnection()),
 		),
 	)
 }
