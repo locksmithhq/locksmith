@@ -9,7 +9,8 @@ import (
 )
 
 type fetchAccountsByProjectIDUseCase struct {
-	fetchAccountsByProjectIDRepository contract.FetchAccountsByProjectIDRepository
+	fetchAccountsByProjectIDRepository         contract.FetchAccountsByProjectIDRepository
+	fetchSocialProvidersByAccountIDsRepository contract.FetchSocialProvidersByAccountIDsRepository
 }
 
 // Execute implements contract.FetchAccountsByProjectIDUseCase.
@@ -19,9 +20,29 @@ func (u *fetchAccountsByProjectIDUseCase) Execute(ctx context.Context, projectID
 		return nil, err
 	}
 
+	ids := make([]string, len(accounts))
+	for i, a := range accounts {
+		ids[i] = a.ID
+	}
+
+	socialMap, _ := u.fetchSocialProvidersByAccountIDsRepository.Execute(ctx, ids)
+	for i := range accounts {
+		if providers, ok := socialMap[accounts[i].ID]; ok {
+			accounts[i].SocialProviders = providers
+		} else {
+			accounts[i].SocialProviders = []string{}
+		}
+	}
+
 	return output.NewAccountsFromDomain(accounts), nil
 }
 
-func NewFetchAccountsByProjectIDUseCase(fetchAccountsByProjectIDRepository contract.FetchAccountsByProjectIDRepository) contract.FetchAccountsByProjectIDUseCase {
-	return &fetchAccountsByProjectIDUseCase{fetchAccountsByProjectIDRepository: fetchAccountsByProjectIDRepository}
+func NewFetchAccountsByProjectIDUseCase(
+	fetchAccountsByProjectIDRepository contract.FetchAccountsByProjectIDRepository,
+	fetchSocialProvidersByAccountIDsRepository contract.FetchSocialProvidersByAccountIDsRepository,
+) contract.FetchAccountsByProjectIDUseCase {
+	return &fetchAccountsByProjectIDUseCase{
+		fetchAccountsByProjectIDRepository:         fetchAccountsByProjectIDRepository,
+		fetchSocialProvidersByAccountIDsRepository: fetchSocialProvidersByAccountIDsRepository,
+	}
 }
