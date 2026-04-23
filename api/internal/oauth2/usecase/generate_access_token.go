@@ -102,6 +102,15 @@ func (u *generateAccessTokenUseCase) Execute(ctx context.Context, in input.Acces
 
 	// 6. Validate PKCE
 	if authCode.CodeChallenge != "" {
+		if authCode.CodeChallengeMethod != "S256" {
+			return output.AccessToken{}, stackerror.NewUseCaseError(
+				"GenerateAccessTokenUseCase",
+				fmt.Errorf("unsupported code_challenge_method: %q", authCode.CodeChallengeMethod),
+				stackerror.WithMessage("only S256 is accepted as code_challenge_method"),
+				stackerror.WithStatusCode(http.StatusBadRequest),
+			)
+		}
+
 		if in.CodeVerifier == "" {
 			return output.AccessToken{}, stackerror.NewUseCaseError(
 				"GenerateAccessTokenUseCase",
@@ -111,7 +120,6 @@ func (u *generateAccessTokenUseCase) Execute(ctx context.Context, in input.Acces
 			)
 		}
 
-		// Calculate hash of code_verifier
 		sha256Verifier := sha256.Sum256([]byte(in.CodeVerifier))
 		encodedVerifier := base64.RawURLEncoding.EncodeToString(sha256Verifier[:])
 
