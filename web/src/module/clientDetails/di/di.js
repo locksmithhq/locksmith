@@ -18,6 +18,10 @@ import { updateSignupByClientIDRepository } from '../data/repository/updateSignu
 import { updateSignupByClientIDUseCase } from '../domain/usecase/updateSignupByClientIDUseCase'
 import { fetchRolesRepository } from '../data/repository/fetchRolesRepository'
 import { fetchRolesUseCase } from '../domain/usecase/fetchRolesUseCase'
+import { getSocialProvidersRepository } from '../data/repository/getSocialProvidersRepository'
+import { getSocialProvidersUseCase } from '../domain/usecase/getSocialProvidersUseCase'
+import { upsertSocialProviderRepository } from '../data/repository/upsertSocialProviderRepository'
+import { upsertSocialProviderUseCase } from '../domain/usecase/upsertSocialProviderUseCase'
 
 const clientDetailControllerImpl = clientDetailController(
     {
@@ -30,6 +34,8 @@ const clientDetailControllerImpl = clientDetailController(
         createSignupByClientIDUseCase: createSignupByClientIDUseCase(createSignupByClientIDRepository(axiosInstance)),
         updateSignupByClientIDUseCase: updateSignupByClientIDUseCase(updateSignupByClientIDRepository(axiosInstance)),
         fetchRolesUseCase: fetchRolesUseCase(fetchRolesRepository(axiosInstance)),
+        getSocialProvidersUseCase: getSocialProvidersUseCase(getSocialProvidersRepository(axiosInstance)),
+        upsertSocialProviderUseCase: upsertSocialProviderUseCase(upsertSocialProviderRepository(axiosInstance)),
     }
 )
 
