@@ -1,6 +1,6 @@
 module github.com/locksmithhq/locksmith/api
 
-go 1.25.5
+go 1.26.2
 
 require (
 	github.com/booscaaa/go-paginate/v3 v3.0.9
