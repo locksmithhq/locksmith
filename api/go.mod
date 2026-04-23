@@ -11,7 +11,7 @@ require (
 	github.com/go-chi/httprate v0.15.0
 	github.com/google/uuid v1.6.0
 	github.com/lib/pq v1.10.9
-	github.com/locksmithhq/locksmith-go v1.0.6
+	github.com/locksmithhq/locksmith-go v1.0.8
 	github.com/markbates/goth v1.82.0
 	github.com/spf13/cobra v1.10.1
 	golang.org/x/crypto v0.45.0
