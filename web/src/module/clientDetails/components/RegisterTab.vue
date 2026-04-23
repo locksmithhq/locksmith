@@ -588,7 +588,7 @@
               :order="controller.registerConfig.layout === 'split-left' ? 0 : 1"
             >
               <div
-                class="bg-gradient-secondary d-flex flex-column justify-center align-center pa-12 w-100 fill-height"
+                class="bg-gradient-primary d-flex flex-column justify-center align-center pa-12 w-100 fill-height"
                 :style="{
                   position: 'relative',
                   overflow: 'hidden',
@@ -599,33 +599,27 @@
                 <div class="decorative-circle circle-2"></div>
 
                 <div
-                  style="position: relative; z-index: 1"
-                  class="text-center text-white"
+                  style="position: relative; z-index: 1; width: 100%"
+                  class="text-center text-white d-flex flex-column align-center"
                 >
-                  <img
+                  <v-img
                     v-if="controller.registerConfig.logo_url"
                     key="branding-logo"
                     :src="controller.registerConfig.logo_url"
-                    alt="Logo"
-                    style="max-height: 80px; max-width: 200px"
-                    class="mb-4"
+                    max-height="160"
+                    max-width="280"
+                    contain
+                    style="width: 100%"
                   />
                   <v-icon
                     v-else
                     key="branding-icon"
-                    size="80"
+                    size="100"
                     color="white"
-                    class="mb-4"
                     style="opacity: 0.9"
                   >
-                    mdi-account-plus-outline
+                    mdi-shield-lock-outline
                   </v-icon>
-                  <h3 class="text-h5 font-weight-bold mb-1">
-                    {{ $t('clientDetails.createAccount') }}
-                  </h3>
-                  <p class="text-body-2" style="opacity: 0.8">
-                    {{ $t('clientDetails.joinPlatform') }}
-                  </p>
                 </div>
               </div>
             </v-col>
@@ -963,8 +957,8 @@ const backgroundStyle = computed(() => {
   color: #2c3e50;
 }
 
-.bg-gradient-secondary {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+.bg-gradient-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
 .decorative-circle {
