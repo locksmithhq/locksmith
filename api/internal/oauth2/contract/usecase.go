@@ -2,6 +2,7 @@ package contract
 
 import (
 	"context"
+	"net/http"
 
 	"github.com/locksmithhq/locksmith/api/internal/oauth2/types/input"
 	"github.com/locksmithhq/locksmith/api/internal/oauth2/types/output"
@@ -38,4 +39,16 @@ type RegisterUseCase interface {
 
 type GetPWAManifestUseCase interface {
 	Execute(ctx context.Context, clientID, redirectURI, locale string) (output.Manifest, error)
+}
+
+type SocialBeginUseCase interface {
+	Execute(ctx context.Context, in input.SocialBegin) (output.SocialBegin, error)
+}
+
+type SocialCallbackUseCase interface {
+	Execute(ctx context.Context, in input.SocialCallback, w http.ResponseWriter, r *http.Request) error
+}
+
+type LogoutUseCase interface {
+	Execute(ctx context.Context, rawRefreshToken string) error
 }
