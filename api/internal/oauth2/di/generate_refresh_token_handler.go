@@ -15,11 +15,14 @@ func NewGenerateRefreshTokenHandler() contract.GenerateRefreshTokenHandler {
 }
 
 func NewGenerateRefreshTokenUseCase() contract.GenerateRefreshTokenUseCase {
+	conn := database.GetConnection()
 	return usecase.NewGenerateRefreshTokenUseCase(
-		repository.NewGetRefreshTokenByHashRepository(database.GetConnection()),
-		repository.NewUpdateRefreshTokenRepository(database.GetConnection()),
-		repository.NewCreateRefreshTokenRepository(database.GetConnection()),
-		repository.NewGetClientByClientIDRepository(database.GetConnection()),
-		repository.NewGetClientByIDRepository(database.GetConnection()),
+		repository.NewGetRefreshTokenByHashRepository(conn),
+		repository.NewUpdateRefreshTokenRepository(conn),
+		repository.NewCreateRefreshTokenRepository(conn),
+		repository.NewGetClientByClientIDRepository(conn),
+		repository.NewGetClientByIDRepository(conn),
+		repository.NewRevokeRefreshTokensBySessionRepository(conn),
+		repository.NewRevokeUserSessionRepository(conn),
 	)
 }
