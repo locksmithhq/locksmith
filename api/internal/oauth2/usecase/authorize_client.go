@@ -14,9 +14,10 @@ import (
 )
 
 type authorizeClientUseCase struct {
-	getClientByClientIDRepository contract.GetClientByClientIDRepository
-	getLoginByClientIDRepository  contract.GetLoginByClientIDRepository
-	getSignupByClientIDRepository contract.GetSignupByClientIDRepository
+	getClientByClientIDRepository              contract.GetClientByClientIDRepository
+	getLoginByClientIDRepository               contract.GetLoginByClientIDRepository
+	getSignupByClientIDRepository              contract.GetSignupByClientIDRepository
+	getEnabledSocialProvidersByClientRepository contract.GetEnabledSocialProvidersByClientRepository
 }
 
 // Execute implements contract.AuthorizeClient.
@@ -43,6 +44,7 @@ func (u *authorizeClientUseCase) Execute(ctx context.Context, in input.Authoriza
 
 	login, _ := u.getLoginByClientIDRepository.Execute(ctx, client.ID)
 	signup, _ := u.getSignupByClientIDRepository.Execute(ctx, client.ID)
+	socialProviders, _ := u.getEnabledSocialProvidersByClientRepository.Execute(ctx, client.ID)
 
 	return output.NewClient(
 		client.ID,
@@ -50,6 +52,7 @@ func (u *authorizeClientUseCase) Execute(ctx context.Context, in input.Authoriza
 		client.Name,
 		login,
 		signup,
+		socialProviders,
 	), nil
 }
 
@@ -57,10 +60,12 @@ func NewAuthorizeClientUseCase(
 	getClientByClientIDRepository contract.GetClientByClientIDRepository,
 	getLoginByClientIDRepository contract.GetLoginByClientIDRepository,
 	getSignupByClientIDRepository contract.GetSignupByClientIDRepository,
+	getEnabledSocialProvidersByClientRepository contract.GetEnabledSocialProvidersByClientRepository,
 ) contract.AuthorizeClient {
 	return &authorizeClientUseCase{
-		getClientByClientIDRepository: getClientByClientIDRepository,
-		getLoginByClientIDRepository:  getLoginByClientIDRepository,
-		getSignupByClientIDRepository: getSignupByClientIDRepository,
+		getClientByClientIDRepository:               getClientByClientIDRepository,
+		getLoginByClientIDRepository:                getLoginByClientIDRepository,
+		getSignupByClientIDRepository:               getSignupByClientIDRepository,
+		getEnabledSocialProvidersByClientRepository: getEnabledSocialProvidersByClientRepository,
 	}
 }
