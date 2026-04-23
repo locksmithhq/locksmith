@@ -3,11 +3,10 @@ default_project:
   description: Default project for Locksmith
   domain: domain:locksmith
 
-# WARNING: Change these credentials immediately after the first run in production.
 default_account:
   name: Default Account
-  email: admin@locksmith.rs
-  password: admin
+  email: ${SEED_ADMIN_EMAIL}
+  password: ${SEED_ADMIN_PASSWORD}
   username: admin
 
 default_client:
@@ -49,8 +48,8 @@ projects:
 
     clients:
       - name: My App Web Client
-        client_id: f1335eae-9670-42a4-8d12-e236884f4000
-        client_secret: cdca238e-966b-4d5c-81b6-5be8df60c35a
+        client_id: ${SEED_APP_CLIENT_ID}
+        client_secret: ${SEED_APP_CLIENT_SECRET}
         redirect_uris: http://localhost:3000/callback http://localhost:3000
         grant_types: authorization_code
         login:
@@ -70,10 +69,10 @@ projects:
       - name: App Admin
         email: admin@myapp.com
         username: admin
-        password: changeme123
+        password: ${SEED_APP_USER_PASSWORD}
         role: role:admin
       - name: Regular User
         email: user@myapp.com
         username: user
-        password: changeme123
+        password: ${SEED_APP_USER_PASSWORD}
         role: role:user
