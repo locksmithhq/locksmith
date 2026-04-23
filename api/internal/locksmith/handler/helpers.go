@@ -18,7 +18,7 @@ func setCookies(w http.ResponseWriter, r *http.Request, accessToken string, refr
 		Domain:   domain,
 		Secure:   true,
 		HttpOnly: true,
-		SameSite: http.SameSiteLaxMode,
+		SameSite: http.SameSiteStrictMode,
 		MaxAge:   expiresIn,
 	})
 
@@ -29,7 +29,7 @@ func setCookies(w http.ResponseWriter, r *http.Request, accessToken string, refr
 		Domain:   domain,
 		Secure:   true,
 		HttpOnly: true,
-		SameSite: http.SameSiteLaxMode,
+		SameSite: http.SameSiteStrictMode,
 		MaxAge:   RefreshTokenMaxAge,
 	})
 }
