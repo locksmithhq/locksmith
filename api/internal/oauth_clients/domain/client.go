@@ -14,6 +14,7 @@ type Client struct {
 	UpdatedAt    string        `json:"updated_at" db:"updated_at" paginate:"updated_at"`
 	DeletedAt    string        `json:"deleted_at" db:"deleted_at" paginate:"deleted_at"`
 	CustomDomain database.Null `json:"custom_domain" db:"custom_domain" paginate:"custom_domain"`
+	RequirePKCE  bool         `json:"require_pkce" db:"require_pkce" paginate:"require_pkce"`
 }
 
 type ClientOption func(*Client)
@@ -81,6 +82,12 @@ func WithDeletedAt(deletedAt string) ClientOption {
 func WithCustomDomain(customDomain database.Null) ClientOption {
 	return func(c *Client) {
 		c.CustomDomain = customDomain
+	}
+}
+
+func WithRequirePKCE(requirePKCE bool) ClientOption {
+	return func(c *Client) {
+		c.RequirePKCE = requirePKCE
 	}
 }
 
