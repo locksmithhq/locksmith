@@ -1,42 +1,46 @@
-FROM alpine:3.20 AS timezone_build_api
-RUN apk --no-cache add tzdata ca-certificates  
+# Stage 1: CA certs + timezone data + non-root user definition
+FROM alpine:3.21 AS base
+RUN apk --no-cache add tzdata ca-certificates && \
+    addgroup -S locksmith && adduser -S locksmith -G locksmith
 
+# Stage 2: Go binary
 FROM golang:1.25.5-alpine3.21 AS builder_api
-RUN apk --no-cache add tzdata ca-certificates
+WORKDIR /build
 
-WORKDIR /go/api
+# Dependency layer cached separately — only re-runs when go.mod/go.sum change
+COPY api/go.mod api/go.sum ./
+RUN go mod download
 
-COPY ./api .
+COPY api/ .
+RUN CGO_ENABLED=0 go build \
+    -ldflags="-s -w" \
+    -trimpath \
+    -o /locksmith \
+    cmd/main.go
 
-RUN mkdir deploy
-RUN go clean --modcache
-RUN go mod tidy
+# Stage 3: Frontend
+FROM oven/bun:1-alpine AS builder_web
+WORKDIR /build
 
-RUN CGO_ENABLED=0 go build -o locksmith cmd/main.go 
-RUN mv locksmith ./deploy/locksmith
-ADD ../config/database ./deploy/database
+COPY web/package.json web/bun.lock ./
+RUN bun install --frozen-lockfile
 
-FROM oven/bun:1 AS builder_web
-
-WORKDIR /web
-
-COPY ./web . 
-
-COPY ./web/package.json ./web/bun.lock ./
-
-RUN bun install
-
+COPY web/ .
 RUN bun run build
 
-FROM scratch AS production
+# Stage 4: Minimal production image
+FROM scratch
 
-COPY --from=timezone_build_api /usr/share/zoneinfo /usr/share/zoneinfo
-COPY --from=timezone_build_api /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+COPY --from=base /usr/share/zoneinfo /usr/share/zoneinfo
+COPY --from=base /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+COPY --from=base /etc/passwd /etc/passwd
+COPY --from=base /etc/group /etc/group
 
-COPY --from=builder_api /go/api/deploy /api/
-COPY --from=builder_web /web/dist /web/dist
-COPY ../config/database/seeder /etc/locksmith/config
+COPY --from=builder_api /locksmith /locksmith
+COPY config/database/migrations /api/database/migrations
+COPY --from=builder_web /build/dist /web/dist
+COPY config/database/seeder /etc/locksmith/config
 
-WORKDIR /api
+USER locksmith:locksmith
 
-ENTRYPOINT  ["./locksmith", "serve"]
+ENTRYPOINT ["/locksmith", "serve"]
