@@ -11,5 +11,6 @@ type Client struct {
 	CreatedAt    string `json:"created_at" db:"created_at"`
 	UpdatedAt    string `json:"updated_at" db:"updated_at"`
 	DeletedAt    string `json:"deleted_at" db:"deleted_at"`
-	Domain       string `json:"domain" db:"domain"`
+	Domain      string `json:"domain" db:"domain"`
+	RequirePKCE bool   `json:"require_pkce" db:"require_pkce"`
 }
