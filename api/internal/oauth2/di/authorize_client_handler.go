@@ -14,6 +14,7 @@ func NewAuthorizeClientHandler() contract.AuthorizeClientHandler {
 			repository.NewGetClientByClientIDRepository(database.GetConnection()),
 			repository.NewGetLoginByClientIDRepository(database.GetConnection()),
 			repository.NewGetSignupByClientIDRepository(database.GetConnection()),
+			repository.NewGetEnabledSocialProvidersByClientRepository(database.GetConnection()),
 		),
 	)
 }
