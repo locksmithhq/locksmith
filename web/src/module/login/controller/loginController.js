@@ -34,7 +34,7 @@ const loginController =
       const codeVerifier = generateCodeVerifier()
       const codeChallenge = await generateCodeChallenge(codeVerifier)
 
-      document.cookie = `pkce_cv=${codeVerifier}; path=/; max-age=600; samesite=lax`
+      document.cookie = `pkce_cv=${codeVerifier}; path=/; max-age=600; samesite=strict; secure`
 
       if (!document.cookie.split(';').some((c) => c.trim().startsWith('device_id='))) {
         let deviceId = localStorage.getItem('device_id')
