@@ -3,11 +3,12 @@ package output
 import "github.com/locksmithhq/locksmith/api/internal/oauth2/domain"
 
 type Client struct {
-	ID       string             `json:"id"`
-	ClientID string             `json:"client_id"`
-	Name     string             `json:"name"`
-	Login    *OAuthClientLogin  `json:"login"`
-	Signup   *OAuthClientSignup `json:"signup"`
+	ID              string             `json:"id"`
+	ClientID        string             `json:"client_id"`
+	Name            string             `json:"name"`
+	Login           *OAuthClientLogin  `json:"login"`
+	Signup          *OAuthClientSignup `json:"signup"`
+	SocialProviders []string           `json:"social_providers"`
 }
 
 func NewClient(
@@ -16,11 +17,16 @@ func NewClient(
 	name string,
 	login domain.OAuthClientLogin,
 	signup domain.OAuthClientSignup,
+	socialProviders []string,
 ) Client {
 	client := Client{
-		ID:       id,
-		ClientID: clientID,
-		Name:     name,
+		ID:              id,
+		ClientID:        clientID,
+		Name:            name,
+		SocialProviders: socialProviders,
+	}
+	if client.SocialProviders == nil {
+		client.SocialProviders = []string{}
 	}
 
 	if login.ID != "" {
