@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/booscaaa/initializers/postgres/types"
+	"github.com/locksmithhq/locksmith/api/internal/core/crypto"
 	"github.com/locksmithhq/locksmith/api/internal/core/types/stackerror"
 	"github.com/locksmithhq/locksmith/api/internal/oauth_clients/contract"
 	"github.com/locksmithhq/locksmith/api/internal/oauth_clients/domain"
@@ -18,17 +19,18 @@ func (r *getClientByIDAndProjectIDRepository) Execute(ctx context.Context, id st
 	var client domain.Client
 
 	query := `
-		SELECT 
-			id, 
-			project_id, 
-			client_id, 
-			client_secret, 
-			redirect_uris, 
-			grant_types, 
-			name, 
-			created_at, 
+		SELECT
+			id,
+			project_id,
+			client_id,
+			client_secret,
+			redirect_uris,
+			grant_types,
+			name,
+			created_at,
 			updated_at,
-			custom_domain
+			custom_domain,
+			require_pkce
 		FROM oauth_clients WHERE id = $1 AND project_id = $2
 	`
 	err := r.database.GetContext(ctx, &client, query, id, projectID)
@@ -36,6 +38,10 @@ func (r *getClientByIDAndProjectIDRepository) Execute(ctx context.Context, id st
 		return domain.Client{}, stackerror.NewRepositoryError("GetClientByIDAndProjectIDRepository", err)
 	}
 
+	client.ClientSecret, err = crypto.Decrypt(client.ClientSecret)
+	if err != nil {
+		return domain.Client{}, stackerror.NewRepositoryError("GetClientByIDAndProjectIDRepository", err)
+	}
 	return client, nil
 }
 
