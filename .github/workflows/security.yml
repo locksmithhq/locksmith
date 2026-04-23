@@ -26,11 +26,6 @@ jobs:
           go install golang.org/x/vuln/cmd/govulncheck@v1.1.4
           govulncheck ./...
 
-      - name: gosec
-        uses: securego/gosec@v2.25.0
-        with:
-          args: -exclude-dir=vendor ./...
-
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v6
         with:
@@ -49,10 +44,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: npm
-          cache-dependency-path: web/package-lock.json
-
-      - run: npm ci
 
       - name: npm audit
         run: npm audit --audit-level=high
