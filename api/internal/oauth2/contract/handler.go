@@ -33,3 +33,11 @@ type PWAManifestHandler interface {
 type FaviconHandler interface {
 	Execute(w http.ResponseWriter, r *http.Request)
 }
+
+type SocialBeginHandler interface {
+	Execute(w http.ResponseWriter, r *http.Request)
+}
+
+type SocialCallbackHandler interface {
+	Execute(w http.ResponseWriter, r *http.Request)
+}
