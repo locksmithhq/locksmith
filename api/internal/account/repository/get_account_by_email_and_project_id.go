@@ -27,7 +27,7 @@ func (r *getAccountByEmailAndProjectIDRepository) Execute(ctx context.Context, e
 		created_at, 
 		updated_at, 
 		deleted_at 
-	FROM accounts WHERE email = $1 AND project_id = $2`
+	FROM accounts WHERE email = $1 AND project_id = $2 AND deleted_at IS NULL`
 	err := r.database.GetContext(ctx, &account, query, email, projectID)
 	if err != nil {
 		return domain.Account{}, stackerror.NewRepositoryError("GetAccountByEmailAndProjectIDRepository", err)
