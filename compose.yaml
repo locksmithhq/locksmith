@@ -19,6 +19,13 @@ services:
       - SSL_MODE=${SSL_MODE}
       - LOCKSMITH_APP_CLIENT_SECRET=${LOCKSMITH_APP_CLIENT_SECRET}
       - LOCKSMITH_APP_CLIENT_ID=${LOCKSMITH_APP_CLIENT_ID}
+      - APP_ENV=${APP_ENV}
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+      - SEED_ADMIN_EMAIL=${SEED_ADMIN_EMAIL}
+      - SEED_ADMIN_PASSWORD=${SEED_ADMIN_PASSWORD}
+      - SEED_APP_CLIENT_ID=${SEED_APP_CLIENT_ID}
+      - SEED_APP_CLIENT_SECRET=${SEED_APP_CLIENT_SECRET}
+      - SEED_APP_USER_PASSWORD=${SEED_APP_USER_PASSWORD}
     volumes:
       - ./api:/api
       - ./config/database:/api/database
@@ -75,17 +82,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-
-  pgweb:
-    image: sosedoff/pgweb
-    container_name: pgweb-locksmith
-    environment:
-      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=${SSL_MODE}
-    depends_on:
-      - database
-    restart: unless-stopped
-    networks:
-      - locksmith-network
 
 volumes:
   locksmith-data:
