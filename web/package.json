@@ -19,7 +19,7 @@
     "vee-validate": "4.15.1",
     "vue": "3.5.33",
     "vue-i18n": "11.3.2",
-    "vue-router": "4.5.1",
+    "vue-router": "5.0.6",
     "vuedraggable": "4.1.0",
     "vuetify": "3.12.5",
     "zod": "4.3.6"
