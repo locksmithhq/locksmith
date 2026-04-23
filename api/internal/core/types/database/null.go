@@ -3,6 +3,7 @@ package database
 import (
 	"database/sql/driver"
 	"encoding/json"
+	"fmt"
 )
 
 type Null struct {
@@ -45,6 +46,22 @@ func (n Null) Value() (driver.Value, error) {
 		return nil, nil
 	}
 	return n.value, nil
+}
+
+// String returns the underlying value as a string.
+// Returns empty string if the value is null.
+func (n Null) String() string {
+	if !n.valid || n.value == nil {
+		return ""
+	}
+	switch v := n.value.(type) {
+	case string:
+		return v
+	case []byte:
+		return string(v)
+	default:
+		return fmt.Sprintf("%v", v)
+	}
 }
 
 
