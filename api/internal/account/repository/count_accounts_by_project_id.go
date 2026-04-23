@@ -20,6 +20,7 @@ func (r *countAccountsByProjectIDRepository) Execute(ctx context.Context, projec
 		Model(&domain.Account{}).
 		Table("accounts").
 		Where("project_id = ?", projectID).
+		Where("deleted_at IS NULL").
 		FromStruct(params).
 		BuildCountSQL()
 
