@@ -107,10 +107,10 @@ export default defineConfig({
     rollupOptions: {
       plugins: [terser()],
       output: {
-        manualChunks: {
-          vuetify: ['vuetify'],
-          vue: ['vue', 'vue-router'],
-          echarts: ['echarts'],
+        manualChunks(id) {
+          if (id.includes('node_modules/vuetify')) return 'vuetify'
+          if (id.includes('node_modules/vue') || id.includes('node_modules/vue-router')) return 'vue'
+          if (id.includes('node_modules/echarts')) return 'echarts'
         },
       },
     },
