@@ -19,7 +19,7 @@ func InitializeAccountsRouter(router chi.Router) {
 	})
 
 	router.Group(func(r chi.Router) {
-		r.Use(adapterMiddleware.BasicAuthMiddleware)
+		r.Use(adapterMiddleware.NewBasicAuthMiddleware())
 
 		r.Post("/accounts", di.NewCreateAccountHandler().Execute)
 		r.Get("/accounts/{id}", di.NewGetAccountByProjectIDAndIDHandler().Execute)
