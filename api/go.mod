@@ -13,7 +13,7 @@ require (
 	github.com/lib/pq v1.10.9
 	github.com/locksmithhq/locksmith-go v1.0.8
 	github.com/markbates/goth v1.82.0
-	github.com/spf13/cobra v1.10.1
+	github.com/spf13/cobra v1.10.2
 	golang.org/x/crypto v0.45.0
 	golang.org/x/image v0.39.0
 	gopkg.in/yaml.v2 v2.4.0
